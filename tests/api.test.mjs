@@ -1,0 +1,34 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {DatabaseSync} from 'node:sqlite';
+import fs from 'node:fs';
+import {api,questions} from '../server/api.mjs';
+import {database} from './database.mjs';
+const hash=async p=>Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p))).toString('hex');
+const student={name:'Aluno de teste',turma:'2° ANO TÉCNICO MATUTINO',codigo:'MAT-001'};
+test('fluxo entre aluno e professor, duplicidade, bloqueio global e recuperação',async()=>{
+ const DB=database(),env={DB,TEACHER_PASSWORD_HASH:await hash('senha-teste')};
+ const call=async(path,body,token)=>{const r=await api(new Request('https://provabd.hebersonmiliano.chatgpt.site/api/'+path,{method:body?'POST':'GET',headers:{Origin:'https://hebersonmiliano.github.io','Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})}),env);return {status:r.status,data:await r.json(),headers:r.headers};};
+ assert.equal((await call('teacher/results')).status,401);
+ assert.equal((await call('login',{password:'errada'})).status,401);
+ const token=(await call('login',{password:'senha-teste'})).data.token;
+ const started=await call('start',student);assert.equal(started.data.questions.length,40);assert.equal(started.data.questions[0].correct,undefined);assert.equal(started.headers.get('Access-Control-Allow-Origin'),'https://hebersonmiliano.github.io');
+ const body={...student,id:crypto.randomUUID(),answers:questions(student.codigo).map(q=>q.correct),saidas:0,forced:false};
+ assert.equal((await call('submit',{...body,answers:[]})).status,400);
+ const result=await call('submit',body);assert.equal(result.status,200);assert.equal(result.data.score,10);
+ assert.deepEqual((await call('submit',body)).data,result.data);
+ const teacher=await call('teacher/results',undefined,token);assert.equal(teacher.data.records.length,1);assert.equal(teacher.data.records[0].name,student.name);assert.deepEqual(teacher.data.usedCodes,['MAT-001']);
+ assert.equal((await call('start',student)).status,409);
+ assert.equal((await call('submit',{...body,id:crypto.randomUUID()})).status,409);assert.equal(DB.sqlite.prepare('SELECT count(*) n FROM submissions').get().n,1);
+ await call('teacher/reset',{codigo:'MAT-001'},token);assert.equal((await call('start',student)).status,200);
+ const partial=await call('submit',{...body,id:crypto.randomUUID(),answers:body.answers.map((a,i)=>i===0?a:null),saidas:2,forced:true});assert.equal(partial.data.score,.25);
+ const legacy={...student,codigo:'MAT-002',answers:body.answers,score:9.75,at:'15/09/2026, 08:00:00',saidas:0};
+ assert.equal((await call('teacher/import',{records:[legacy]})).status,401);
+ assert.equal((await call('teacher/import',{records:[legacy]},token)).data.imported,1);
+ assert.equal((await call('teacher/import',{records:[legacy]},token)).data.imported,0);
+ assert.equal((await call('teacher/results',undefined,token)).data.records.length,3);
+ const malicious=await api(new Request('https://provabd.hebersonmiliano.chatgpt.site/api/health',{headers:{Origin:'https://example.org'}}),env);assert.equal(malicious.status,403);
+ DB.sqlite.close();
+});
+test('falha no banco não confirma recebimento',async()=>{const r=await api(new Request('https://provabd.hebersonmiliano.chatgpt.site/api/submit',{method:'POST',body:JSON.stringify({...student,id:crypto.randomUUID(),answers:Array(40).fill(0),saidas:0})}),{});assert.equal(r.status,503);assert.equal((await r.json()).ok,undefined);});
+
