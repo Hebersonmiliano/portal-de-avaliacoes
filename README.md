@@ -1,24 +1,41 @@
 # Prova de Banco de Dados
 
-A página do aluno e o painel permanecem no GitHub Pages. O serviço de recebimento usa o Site existente em `https://provabd.hebersonmiliano.chatgpt.site`, com banco D1 central.
+O GitHub Pages serve a página; o Site existente em https://provabd.hebersonmiliano.chatgpt.site fornece a API e o banco D1.
 
-## Aplicação
+## Uso pelo professor
 
-- Acesso do professor: use a senha existente. O painel atualiza a cada 15 segundos.
-- O aluno só vê a confirmação quando o banco recebe a prova, com protocolo.
-- Se houver falha de conexão, as respostas ficam pendentes no navegador e podem ser reenviadas. O reenvio usa o mesmo protocolo e não duplica o resultado.
-- Cada código é bloqueado no banco após o recebimento. Liberar o código preserva as notas anteriores.
-- As notas usam duas casas decimais para preservar os incrementos de 0,25.
-- O banco original continha 39 questões. A nova versão contém 40; notas antigas são importadas sem recalcular.
+A nova senha é entregue privadamente, fora deste repositório. Entre no painel e use **Baixar 200 códigos**. Cada turma tem 40 códigos aleatórios; os códigos previsíveis antigos não iniciam novas tentativas.
 
-## Recuperação de provas anteriores
+Os resultados antigos permanecem no histórico. Uma tentativa ativa reserva o código. Liberar um código revoga a tentativa em andamento e preserva as notas já recebidas.
 
-No mesmo endereço, aparelho e navegador utilizados pelo aluno, entre no painel do professor com sua senha. O painel mostra **Baixar provas antigas deste navegador** quando encontra registros antigos. Use **Importar provas antigas** no painel para recuperar o arquivo JSON. O download verifica a sessão do professor antes de gerar o arquivo; a opção não aparece na tela dos alunos. A importação evita duplicatas e não recupera dados apagados do navegador.
+O aluno só vê confirmação após a gravação no banco. Reenvios de uma tentativa válida retornam o mesmo protocolo e nota. A tentativa expira após 24 horas; o professor pode liberar o código novamente.
+
+A correção usa a cópia das questões e alternativas guardada no servidor no início da tentativa. Alterações no navegador não mudam essa cópia, a identidade vinculada nem a nota calculada pelo servidor.
+
+## Conteúdo confidencial
+
+O gabarito e as 40 questões novas ficam exclusivamente na tabela private_question_bank do D1. Nenhum conteúdo real do banco ou senha pode ser incluído em código, testes, migrações, arquivos do GitHub Pages ou histórico Git. As questões antigas publicadas no histórico estão fora de uso; excluir um arquivo atual não apaga cópias históricas.
+
+A carga do banco usa POST /api/teacher/bank com uma sessão autenticada. A resposta informa apenas a quantidade gravada. Não existe rota pública de exportação do banco. As tentativas recebem somente enunciados e alternativas.
+
+## Autenticação
+
+A senha usa PBKDF2-SHA256 com sal e 100.000 iterações. Os valores TEACHER_PASSWORD_SALT, TEACHER_PASSWORD_VERIFIER e ATTEMPT_SECRET são segredos do ambiente Sites. Não existe senha nem verificador de produção no repositório. Sessões antigas foram descontinuadas; as novas expiram em duas horas e são revogadas ao sair.
+
+O login limita solicitações por IP a oito por quinze minutos. O início de prova aceita até 250 solicitações por IP a cada quinze minutos para permitir redes escolares compartilhadas. Os códigos possuem 80 bits aleatórios. Tentativas exigem um token HMAC, identidade vinculada e código reservado no banco. A correção nunca aceita a nota enviada pelo cliente.
+
+## Recuperação
+
+No mesmo endereço, aparelho e navegador utilizados pelo aluno, entre no painel do professor. **Baixar provas antigas deste navegador** aparece somente no painel quando há registros antigos. O download valida a sessão com o servidor. Use **Importar provas antigas** para recuperar o JSON sem duplicar registros. A importação é uma operação exclusiva do professor; os arquivos antigos não têm assinatura digital e precisam ser conferidos.
 
 ## Desenvolvimento
 
-Node 24 ou superior. Execute `npm ci`, `npm test` e `npm run build`. Para conferir com um banco SQLite descartável: `node scripts/preview.mjs`; endereço `http://localhost:4173`, senha local `teste-local`. Esta senha só vale para a prévia local.
+Node 24: npm ci, npm test, npm run build. A prévia usa node scripts/preview.mjs em http://localhost:4173, com senha teste-local e questões fictícias.
 
-Edite `server/client.js` e `server/page.html`; o build gera `dist/index.html` para o GitHub Pages e `dist/server/index.js` para Sites. O banco é definido em `db/schema.ts`; use `npm run db:generate` para novas migrações. Nunca altere migrações já publicadas.
+Edite server/client.js e server/page.html. O build gera dist/index.html para GitHub Pages e o Worker em dist/server para Sites. Alterações no esquema usam npm run db:generate. Nunca reescreva migrações aplicadas.
 
-Publique primeiro o serviço Sites com a migração D1 e depois a página no GitHub Pages. O fluxo `.github/workflows/pages.yml` publica somente a página já gerada e a imagem. A senha existente é verificada pelo servidor; uma configuração `TEACHER_PASSWORD_HASH` no ambiente Sites pode substituir o hash legado. Nenhum token de sessão é enviado nos arquivos da página.
+Publique a API e suas migrações antes da página. Configure os segredos e carregue o banco privado antes de aplicar provas. Testes públicos usam dados fictícios.
+
+## Limites
+
+Atalhos de inspeção podem ser bloqueados apenas como barreira de interface. O navegador do aluno continua sob controle dele. Registro de saídas, cópia local e teclas não constituem prova confiável de cola. A proteção implementada está na autenticação, reserva da tentativa, sigilo do banco e correção no servidor.
