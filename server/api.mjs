@@ -24,7 +24,7 @@ async function handle(req,env){
  const path=new URL(req.url).pathname;
  if(req.method==='GET'&&path==='/api/health'){const row=await db(env).prepare('SELECT COUNT(*) n FROM private_question_bank').first();return json({ok:true,ready:row.n>=40});}
  if(req.method==='POST'&&path==='/api/login'){
-  if(!await throttle(req,env,'login',8,15*60*1000))return json({error:'Muitas tentativas de acesso. Aguarde 15 minutos antes de tentar novamente.'},429);
+  if(!await throttle(req,env,'login-v2',8,2*60*1000))return json({error:'Muitas tentativas de acesso. Aguarde 2 minutos antes de tentar novamente.'},429);
   const b=await req.json();if(!env.TEACHER_PASSWORD_SALT||!env.TEACHER_PASSWORD_VERIFIER)return json({error:'Acesso do professor temporariamente indisponível.'},503);
   if(typeof b?.password!=='string'||b.password.length>200||!constantEqual(await passwordVerifier(b.password,env.TEACHER_PASSWORD_SALT),env.TEACHER_PASSWORD_VERIFIER))return json({error:'Senha incorreta.'},401);
   const token=randomToken();await db(env).batch([db(env).prepare('DELETE FROM secure_teacher_sessions WHERE expires<?').bind(Date.now()),db(env).prepare('INSERT INTO secure_teacher_sessions (token,expires) VALUES (?,?)').bind(await sha(token),Date.now()+2*3600000)]);return json({token});
