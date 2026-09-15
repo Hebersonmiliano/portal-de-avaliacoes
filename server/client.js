@@ -29,6 +29,14 @@ async function submitExam(e,force=false){
 }
 document.addEventListener('visibilitychange',()=>{if(!examActive||document.visibilityState!=='hidden')return;draft.saidas++;saveDraft();if(draft.saidas>=2){draft.forced=true;submitExam(null,true);}else{$('securityNotice').textContent='Você saiu da página da prova. Se sair novamente, a prova será encerrada e o envio será iniciado.';$('securityNotice').className='notice security-alert';}});
 for(const name of ['copy','cut','paste','contextmenu'])document.addEventListener(name,e=>{if(examActive)e.preventDefault();});
+// Dificulta a abertura das ferramentas de desenvolvedor durante a prova.
+// A correção e a nota continuam protegidas no servidor.
+document.addEventListener('keydown',e=>{
+ const key=String(e.key||'').toLowerCase();
+ const blocked=e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(key))||(e.ctrlKey&&key==='u')||(e.ctrlKey&&key==='p');
+ if(examActive&&blocked){e.preventDefault();e.stopPropagation();$('securityNotice').textContent='Ferramentas do navegador e impressão estão bloqueadas durante a prova.';$('securityNotice').className='notice security-alert';}
+},true);
+document.addEventListener('dragstart',e=>{if(examActive)e.preventDefault();});
 window.addEventListener('online',()=>{if(draft?.pending&&!sending)submitExam(null,draft.forced);});
 window.addEventListener('beforeunload',e=>{if(draft){e.preventDefault();e.returnValue='';}});
 function openTeacher(){$('teacherLogin').classList.remove('hidden');$('teacherPassword').focus();}
