@@ -64,11 +64,7 @@ async function generateTeacherCode(){
  const turma=$('codeClass').value;if(!turma){$('codeMessage').textContent='Selecione a turma do aluno.';return;}
  $('generateCodeButton').disabled=true;
  try{
-  const data=await request('/api/teacher/codes',{},true);
-  const delivered=stored('bd-delivered-codes-v1',[]);
-  const code=data.codes.find(c=>c.turma===turma&&c.state==='available'&&!delivered.includes(c.codigo));
-  if(!code)throw Error('Não há mais códigos disponíveis para esta turma neste navegador. Consulte a lista em Baixar 200 códigos.');
-  localStorage.setItem('bd-delivered-codes-v1',JSON.stringify([...delivered,code.codigo]));
+  const code=await request('/api/teacher/generate-code',{turma},true);
   $('generatedCode').value=code.codigo;$('copyCodeButton').disabled=false;
   $('codeMessage').textContent='Código para '+turma+'. Clique em Copiar código e entregue a apenas um aluno.';
  }catch(e){$('codeMessage').textContent=e.message;}finally{$('generateCodeButton').disabled=false;}
