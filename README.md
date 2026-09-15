@@ -13,7 +13,7 @@ A página do aluno e o painel permanecem no GitHub Pages. O serviço de recebime
 
 ## Recuperação de provas anteriores
 
-No mesmo endereço, aparelho e navegador utilizados pelo aluno, a página mostra **Baixar provas antigas deste navegador** quando encontra registros antigos. Entregue o arquivo JSON ao professor e use **Importar provas antigas** no painel. A importação exige a senha do professor e evita duplicatas. Ela não recupera dados apagados do navegador.
+No mesmo endereço, aparelho e navegador utilizados pelo aluno, entre no painel do professor com sua senha. O painel mostra **Baixar provas antigas deste navegador** quando encontra registros antigos. Use **Importar provas antigas** no painel para recuperar o arquivo JSON. O download verifica a sessão do professor antes de gerar o arquivo; a opção não aparece na tela dos alunos. A importação evita duplicatas e não recupera dados apagados do navegador.
 
 ## Desenvolvimento
 
