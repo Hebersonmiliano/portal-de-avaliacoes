@@ -29,6 +29,14 @@ async function submitExam(e,force=false){
 }
 document.addEventListener('visibilitychange',()=>{if(!examActive||document.visibilityState!=='hidden')return;draft.saidas++;saveDraft();if(draft.saidas>=2){draft.forced=true;submitExam(null,true);}else{$('securityNotice').textContent='Você saiu da página da prova. Se sair novamente, a prova será encerrada e o envio será iniciado.';$('securityNotice').className='notice security-alert';}});
 for(const name of ['copy','cut','paste','contextmenu'])document.addEventListener(name,e=>{if(examActive)e.preventDefault();});
+// Dificulta a abertura das ferramentas de desenvolvedor durante a prova.
+// A correção e a nota continuam protegidas no servidor.
+document.addEventListener('keydown',e=>{
+ const key=String(e.key||'').toLowerCase();
+ const blocked=e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(key))||(e.ctrlKey&&key==='u')||(e.ctrlKey&&key==='p');
+ if(examActive&&blocked){e.preventDefault();e.stopPropagation();$('securityNotice').textContent='Ferramentas do navegador e impressão estão bloqueadas durante a prova.';$('securityNotice').className='notice security-alert';}
+},true);
+document.addEventListener('dragstart',e=>{if(examActive)e.preventDefault();});
 window.addEventListener('online',()=>{if(draft?.pending&&!sending)submitExam(null,draft.forced);});
 window.addEventListener('beforeunload',e=>{if(draft){e.preventDefault();e.returnValue='';}});
 function openTeacher(){$('teacherLogin').classList.remove('hidden');$('teacherPassword').focus();}
@@ -36,6 +44,7 @@ async function loginTeacher(event){event.preventDefault();const password=$('teac
 async function refreshResults(){try{const data=await request('/api/teacher/results',undefined,true);records=data.records;usedCodes=data.usedCodes;renderTeacher();$('teacherStatus').textContent='Resultados do banco central • atualizado às '+new Date().toLocaleTimeString('pt-BR');}catch(e){$('teacherStatus').textContent=e.message;if(!$('teacherBody').innerHTML)renderTeacher();}}
 function renderTeacher(){
  $('teacherBody').innerHTML='<div class="actions"><button class="btn secondary" onclick="refreshResults()">Atualizar resultados</button><button class="btn secondary" onclick="exportCSV()">Baixar resultados CSV</button><button class="btn secondary" onclick="exportCodes()">Baixar 200 códigos</button><button class="btn secondary" onclick="document.getElementById(\'importFile\').click()">Importar provas antigas</button><input id="importFile" type="file" accept=".json" hidden onchange="importBackup(this)"></div><div id="importStatus" class="muted" role="status"></div>';
+ const oldRecords=stored('bd-results',[]);if(teacherToken&&Array.isArray(oldRecords)&&oldRecords.length){const btn=document.createElement('button');btn.className='btn secondary';btn.textContent='Baixar provas antigas deste navegador';btn.onclick=exportBackup;$('teacherBody').querySelector('.actions').append(btn);}
  if(!records.length)$('teacherBody').insertAdjacentHTML('beforeend','<p class="muted">Nenhuma prova recebida no banco central. Os resultados aparecerão aqui após a confirmação do envio.</p>');
  const turmas=[...new Set(records.map(r=>r.turma))];
  for(const turma of turmas){const list=records.filter(r=>r.turma===turma);$('teacherBody').insertAdjacentHTML('beforeend',`<h3>${escapeHTML(turma)} (${list.length})</h3><div class="table-wrap"><table><thead><tr><th>Aluno</th><th>Código</th><th>Nota</th><th>Data</th><th>Saídas</th><th>Origem</th></tr></thead><tbody>${list.map(r=>`<tr><td>${escapeHTML(r.name)}</td><td>${escapeHTML(r.codigo)}</td><td>${formatScore(r.score)} / 10</td><td>${escapeHTML(r.source==='online'?new Date(r.at).toLocaleString('pt-BR'):r.at)}</td><td>${escapeHTML(r.saidas)}</td><td>${r.source==='online'?'Online':'Recuperada'}</td></tr>`).join('')}</tbody></table></div>`);}
@@ -46,8 +55,7 @@ function download(name,text,type){const url=URL.createObjectURL(new Blob([text],
 function csv(name,rows){download(name,'\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8');}
 function exportCSV(){csv('resultados-prova-banco-dados.csv',[['Nome','Turma','Código','Nota','Data','Saídas','Origem','Protocolo','Respostas'],...records.map(r=>[r.name,r.turma,r.codigo,formatScore(r.score),r.at,r.saidas,r.source,r.id,r.answers.map((a,i)=>`${i+1}:${a===null?'-':String.fromCharCode(65+a)}`).join(' ')])]);}
 function exportCodes(){csv('codigos-individuais.csv',[['Turma','Código','Status'],...Object.entries(prefixes).flatMap(([t,p])=>Array.from({length:40},(_,i)=>{const c=p+'-'+String(i+1).padStart(3,'0');return [t,c,usedCodes.includes(c)?'UTILIZADO':'DISPONÍVEL'];}))]);}
-function exportBackup(){const old=stored('bd-results',[]);download('recuperacao-provas.json',JSON.stringify({records:old},null,2),'application/json');}
+async function exportBackup(){if(!teacherToken)return;try{await request('/api/teacher/results',undefined,true);const old=stored('bd-results',[]);download('recuperacao-provas.json',JSON.stringify({records:old},null,2),'application/json');}catch(e){$('teacherStatus').textContent=e.message;}}
 function exportPending(){if(draft)download('copia-prova-pendente.json',JSON.stringify({pending:draft},null,2),'application/json');}
 async function importBackup(input){const file=input.files[0];if(!file)return;try{if(file.size>200000)throw Error('Arquivo muito grande.');const data=JSON.parse(await file.text());const r=await request('/api/teacher/import',data,true);await refreshResults();$('importStatus').textContent=`${r.imported} prova(s) recuperada(s). Registros repetidos não foram duplicados.`;}catch(e){$('importStatus').textContent=e.message;}finally{input.value='';}}
 const previous=stored('bd-draft-v2',null);if(previous?.id&&previous.questions?.length===40&&previous.answers?.length===40){draft=previous;showExam();}
-const oldRecords=stored('bd-results',[]);if(Array.isArray(oldRecords)&&oldRecords.length){$('recovery').classList.remove('hidden');$('recoveryCount').textContent=`Há ${oldRecords.length} prova(s) antiga(s) salva(s) neste navegador. Baixe o arquivo e entregue ao professor para importar no painel.`;}
