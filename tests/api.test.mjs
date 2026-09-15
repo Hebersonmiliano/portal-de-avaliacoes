@@ -13,6 +13,18 @@ export async function setup(){
  const token=(await call('login',{password:'senha-local-de-teste'})).data.token;
  return {DB,env,call,token};
 }
+test('código curto exige professor, é único e inicia prova',async()=>{
+ const {call,token}=await setup();
+ assert.equal((await call('teacher/generate-code',{turma:classes[0]})).status,401);
+ assert.equal((await call('teacher/generate-code',{turma:'inválida'},token)).status,400);
+ const seen=new Set();let codigo;
+ for(let i=0;i<30;i++){
+  const r=await call('teacher/generate-code',{turma:classes[0]},token);
+  assert.equal(r.status,200);codigo=r.data.codigo;assert.match(codigo,/^[A-Z]{2}[0-9]{2}$/);assert.ok(!seen.has(codigo));seen.add(codigo);
+ }
+ await call('teacher/bank',{questions:bank},token);
+ assert.equal((await call('start',{name:'Aluno teste',turma:classes[0],codigo,nonce:randomToken()})).status,200);
+});
 test('códigos privados, reserva, identidade, correção e reenvio idempotente',async()=>{
  const {DB,call,token}=await setup();
  assert.equal((await call('teacher/results')).status,401);

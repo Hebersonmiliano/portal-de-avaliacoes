@@ -36,6 +36,16 @@ async function handle(req,env){
    const [records,codes]=await db(env).batch([db(env).prepare('SELECT * FROM submissions ORDER BY at DESC'),db(env).prepare('SELECT codigo,state FROM secure_codes WHERE state!=?').bind('available')]);return json({records:records.results.map(readRecord),usedCodes:codes.results.map(r=>r.codigo)});
   }
   if(req.method==='POST'&&path==='/api/teacher/codes'){await ensureCodes(env);const list=await db(env).prepare('SELECT codigo,turma,state FROM secure_codes ORDER BY turma,slot').all();return json({codes:list.results});}
+  if(req.method==='POST'&&path==='/api/teacher/generate-code'){
+   const b=await req.json();if(!classes.includes(b?.turma))return json({error:'Selecione uma turma válida.'},400);
+   for(let i=0;i<100;i++){
+    const bytes=crypto.getRandomValues(new Uint8Array(4));
+    const codigo=String.fromCharCode(65+bytes[0]%26,65+bytes[1]%26)+String(bytes[2]%10)+String(bytes[3]%10);
+    const result=await db(env).prepare('INSERT OR IGNORE INTO secure_codes (codigo,turma,slot,state) VALUES (?,?,?,?)').bind(codigo,b.turma,'short:'+crypto.randomUUID(),'available').run();
+    if(result.meta.changes)return json({codigo,turma:b.turma});
+   }
+   return json({error:'Não foi possível gerar um código novo. Tente novamente.'},503);
+  }
   if(req.method==='POST'&&path==='/api/teacher/reset'){
    const b=await req.json();if(typeof b?.codigo!=='string')return json({error:'Código inválido.'},400);
    await db(env).batch([db(env).prepare('UPDATE exam_attempts SET status=? WHERE id=(SELECT attempt_id FROM secure_codes WHERE codigo=?) AND status=?').bind('revoked',b.codigo,'active'),db(env).prepare('UPDATE secure_codes SET state=?,attempt_id=NULL WHERE codigo=?').bind('available',b.codigo)]);return json({ok:true});
