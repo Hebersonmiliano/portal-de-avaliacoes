@@ -1,0 +1,9 @@
+export const classes=['2° ANO TÉCNICO MATUTINO','2° ANO TÉCNICO VESPERTINO','2° ANO TÉCNICO VESPERTINO NAZIR','2° ANO TÉCNICO TRINDADE','1° ANO TÉCNICO TRINDADE'];
+export const hex=bytes=>Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
+export const randomToken=()=>hex(crypto.getRandomValues(new Uint8Array(32)));
+export const sha=async value=>hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)));
+export function constantEqual(a,b){if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;let diff=0;for(let i=0;i<a.length;i++)diff|=a.charCodeAt(i)^b.charCodeAt(i);return diff===0;}
+export async function passwordVerifier(password,salt){const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:100000,hash:'SHA-256'},key,256));}
+export async function attemptToken(secret,code,nonce){if(!secret)throw Error('Segredo de tentativas indisponível');const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);return hex(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(code+':'+nonce)));}
+export function shuffled(list){const items=[...list];for(let i=items.length-1;i>0;i--){const size=i+1,limit=Math.floor(4294967296/size)*size;let n;do{n=crypto.getRandomValues(new Uint32Array(1))[0];}while(n>=limit);const j=n%size;[items[i],items[j]]=[items[j],items[i]];}return items;}
+export function arrangeQuestions(bank){return shuffled(bank).map(q=>{const options=shuffled(q.options.map((text,i)=>({text,correct:i===q.correct})));return {text:q.text,options:options.map(o=>o.text),correct:options.findIndex(o=>o.correct)};});}
