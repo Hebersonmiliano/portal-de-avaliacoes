@@ -42,6 +42,11 @@ function openTeacher(){$('teacherLogin').classList.remove('hidden');$('teacherPa
 async function loginTeacher(event){event.preventDefault();const password=$('teacherPassword').value;try{teacherToken=(await request('/api/login',{password})).token;$('teacherPassword').value='';$('teacherLogin').classList.add('hidden');$('start').classList.add('hidden');$('teacher').classList.remove('hidden');await refreshResults();clearInterval(refreshTimer);refreshTimer=setInterval(()=>refreshResults(),15000);}catch(e){showError('loginError',e.message);}}
 async function refreshResults(){try{const data=await request('/api/teacher/results',undefined,true);records=data.records;usedCodes=data.usedCodes;renderTeacher();$('teacherStatus').textContent='Resultados do banco central • atualizado às '+new Date().toLocaleTimeString('pt-BR');}catch(e){$('teacherStatus').textContent=e.message;if(!$('teacherBody').innerHTML)renderTeacher();}}
 function renderTeacher(){
+ if(!$('codeGenerator')){
+  const box=document.createElement('section');box.id='codeGenerator';box.className='card';box.style.padding='18px';
+  box.innerHTML='<h3>Gerador de códigos individuais</h3><p class="muted">Escolha a turma e obtenha um código disponível para copiar e entregar ao aluno. Códigos já selecionados neste navegador não se repetem.</p><div class="field"><label for="codeClass">Turma do aluno</label><select id="codeClass" style="padding:12px;font-size:16px"></select></div><div class="actions"><button id="generateCodeButton" class="btn" onclick="generateTeacherCode()">Gerar código</button><button id="copyCodeButton" class="btn secondary" onclick="copyTeacherCode()" disabled>Copiar código</button></div><div class="field"><label for="generatedCode">Código individual</label><input id="generatedCode" readonly placeholder="O código aparecerá aqui"></div><p id="codeMessage" class="muted" role="status"></p>';
+  $('teacherBody').before(box);$('codeClass').innerHTML=$('classSelect').innerHTML;
+ }
  $('teacherBody').innerHTML='<div class="actions"><button class="btn secondary" onclick="refreshResults()">Atualizar resultados</button><button class="btn secondary" onclick="exportCSV()">Baixar resultados CSV</button><button class="btn secondary" onclick="exportCodes()">Baixar 200 códigos</button><button class="btn secondary" onclick="document.getElementById(\'importFile\').click()">Importar provas antigas</button><input id="importFile" type="file" accept=".json" hidden onchange="importBackup(this)"></div><div id="importStatus" class="muted" role="status"></div>';
  const oldRecords=stored('bd-results',[]);if(teacherToken&&Array.isArray(oldRecords)&&oldRecords.length){const btn=document.createElement('button');btn.className='btn secondary';btn.textContent='Baixar provas antigas deste navegador';btn.onclick=exportBackup;$('teacherBody').querySelector('.actions').append(btn);}
  if(!records.length)$('teacherBody').insertAdjacentHTML('beforeend','<p class="muted">Nenhuma prova recebida no banco central. Os resultados aparecerão aqui após a confirmação do envio.</p>');
@@ -54,8 +59,28 @@ function download(name,text,type){const url=URL.createObjectURL(new Blob([text],
 function csv(name,rows){download(name,'\ufeff'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8');}
 function exportCSV(){csv('resultados-prova-banco-dados.csv',[['Nome','Turma','Código','Nota','Data','Saídas','Origem','Protocolo','Respostas'],...records.map(r=>[r.name,r.turma,r.codigo,formatScore(r.score),r.at,r.saidas,r.source,r.id,r.answers.map((a,i)=>`${i+1}:${a===null?'-':String.fromCharCode(65+a)}`).join(' ')])]);}
 async function exportCodes(){if(!teacherToken)return;try{const data=await request('/api/teacher/codes',{},true);csv('novos-codigos-individuais.csv',[['Turma','Código','Status'],...data.codes.map(c=>[c.turma,c.codigo,({available:'DISPONÍVEL',active:'EM ANDAMENTO',used:'UTILIZADO'})[c.state]])]);}catch(e){$('teacherStatus').textContent=e.message;}}
+async function generateTeacherCode(){
+ if(!teacherToken)return;
+ const turma=$('codeClass').value;if(!turma){$('codeMessage').textContent='Selecione a turma do aluno.';return;}
+ $('generateCodeButton').disabled=true;
+ try{
+  const data=await request('/api/teacher/codes',{},true);
+  const delivered=stored('bd-delivered-codes-v1',[]);
+  const code=data.codes.find(c=>c.turma===turma&&c.state==='available'&&!delivered.includes(c.codigo));
+  if(!code)throw Error('Não há mais códigos disponíveis para esta turma neste navegador. Consulte a lista em Baixar 200 códigos.');
+  localStorage.setItem('bd-delivered-codes-v1',JSON.stringify([...delivered,code.codigo]));
+  $('generatedCode').value=code.codigo;$('copyCodeButton').disabled=false;
+  $('codeMessage').textContent='Código para '+turma+'. Clique em Copiar código e entregue a apenas um aluno.';
+ }catch(e){$('codeMessage').textContent=e.message;}finally{$('generateCodeButton').disabled=false;}
+}
+async function copyTeacherCode(){
+ if(!teacherToken||!$('generatedCode').value)return;
+ try{await navigator.clipboard.writeText($('generatedCode').value);$('codeMessage').textContent='Código copiado! Cole na mensagem para o aluno.';}
+ catch{$('generatedCode').focus();$('generatedCode').select();$('codeMessage').textContent='Código selecionado. Pressione Ctrl+C para copiar.';}
+}
 async function logoutTeacher(){try{await request('/api/teacher/logout',{},true);}finally{teacherToken='';records=[];usedCodes=[];clearInterval(refreshTimer);location.reload();}}
 async function exportBackup(){if(!teacherToken)return;try{await request('/api/teacher/results',undefined,true);const old=stored('bd-results',[]);download('recuperacao-provas.json',JSON.stringify({records:old},null,2),'application/json');}catch(e){$('teacherStatus').textContent=e.message;}}
 function exportPending(){if(draft)download('copia-prova-pendente.json',JSON.stringify({pending:draft},null,2),'application/json');}
 async function importBackup(input){const file=input.files[0];if(!file)return;try{if(file.size>200000)throw Error('Arquivo muito grande.');const data=JSON.parse(await file.text());const r=await request('/api/teacher/import',data,true);await refreshResults();$('importStatus').textContent=`${r.imported} prova(s) recuperada(s). Registros repetidos não foram duplicados.`;}catch(e){$('importStatus').textContent=e.message;}finally{input.value='';}}
 const previous=stored('bd-draft-v3',null);if(previous?.id&&previous.token&&previous.questions?.length===40&&previous.answers?.length===40){draft=previous;showExam();}
+
