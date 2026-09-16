@@ -1,6 +1,6 @@
 export const jogosQuestions = [
   {
-    "text": "Em um jogo digital, qual elemento responde à pergunta “O que posso fazer?”?",
+    "text": "Durante o planejamento de um jogo de plataforma, a equipe decidiu que o personagem poderia correr, pular e coletar moedas. Essas ações representam aquilo que o jogador consegue fazer dentro do jogo. Qual elemento do design de jogos está sendo definido principalmente?",
     "options": [
       "Mecânica",
       "Regra",
@@ -11,7 +11,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "O core loop de um jogo é definido na apostila como:",
+    "text": "Em um jogo de aventura, o jogador explora uma floresta, encontra recursos, enfrenta inimigos e utiliza os itens coletados para avançar. Essa sequência de ações se repete várias vezes durante a partida. Como é chamado esse ciclo principal?",
     "options": [
       "a sequência recorrente que sustenta a experiência",
       "a ordem fixa das cenas do projeto",
@@ -22,7 +22,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Segundo a apostila, qual marco de 1962 se tornou referência dos jogos em computador?",
+    "text": "Um professor explicou aos alunos que, em 1962, um jogo criado em computador chamou atenção por apresentar movimentação, combate e interação entre jogadores. Qual jogo é considerado um marco dos jogos em computador?",
     "options": [
       "Spacewar!",
       "Pong",
@@ -33,7 +33,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Na classificação apresentada, “mobile”, “multiplayer” e “pixel art” correspondem, respectivamente, a:",
+    "text": "Uma equipe criou um jogo para celulares, com partidas entre vários participantes e personagens desenhados com pequenos quadrados coloridos. Nesse caso, os termos utilizados representam, respectivamente:",
     "options": [
       "plataforma, modo de participação e linguagem visual",
       "gênero, plataforma e mecânica",
@@ -44,7 +44,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Em um jogo de plataforma, quais sistemas aparecem como centrais no primeiro exercício sugerido?",
+    "text": "Em uma atividade do curso, os estudantes deveriam criar uma fase em que o personagem atravessasse obstáculos até chegar ao final. Para isso, era necessário configurar gravidade, salto, chão e câmera. Qual gênero de jogo está sendo trabalhado?",
     "options": [
       "gravidade, salto, chão e câmera",
       "inventário, diálogo, economia e crafting",
@@ -55,7 +55,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Qual área da criação de jogos organiza desafios no espaço?",
+    "text": "Durante a produção de uma fase, uma profissional organiza a posição dos obstáculos, inimigos, caminhos e recompensas para criar uma experiência divertida e desafiadora. Qual área da criação de jogos realiza esse trabalho?",
     "options": [
       "Level design",
       "Áudio",
@@ -66,7 +66,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No ciclo de prototipação proposto, antes de produzir muita arte e conteúdo deve-se:",
+    "text": "Antes de produzir todas as fases, os desenhos e os efeitos sonoros de um jogo, uma equipe criou uma pequena sala para verificar se o personagem conseguia andar, pular e enfrentar um obstáculo. Qual é o objetivo principal dessa prática?",
     "options": [
       "testar uma hipótese com protótipo simples e observar alguém jogando",
       "finalizar todas as fases",
@@ -77,7 +77,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "O GDevelop é apresentado na apostila como:",
+    "text": "Um aluno deseja criar um jogo usando programação visual, organizando condições e ações em eventos. Ele também quer utilizar JavaScript quando precisar de recursos mais avançados. Qual ferramenta atende a essas características?",
     "options": [
       "motor e editor de jogos com programação visual por eventos e possibilidade de JavaScript",
       "editor exclusivo de pixel art",
@@ -88,7 +88,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No editor do GDevelop, qual área é usada para escrever condições e ações?",
+    "text": "No GDevelop, um estudante precisa determinar que, quando o jogador tocar em uma moeda, a pontuação aumente. Em qual área do editor ele deve criar essa lógica?",
     "options": [
       "Editor de eventos",
       "Lista de objetos",
@@ -99,7 +99,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No exemplo cristal.png → Cristal → dez cristais na fase, esses elementos são, respectivamente:",
+    "text": "Em um projeto, a imagem cristal.png foi adicionada ao projeto, depois foi criado o objeto chamado Cristal e, por fim, vários cristais foram colocados na fase. Esses três elementos correspondem, respectivamente, a:",
     "options": [
       "recurso, objeto e instâncias",
       "objeto, recurso e comportamentos",
@@ -110,7 +110,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Qual afirmação diferencia corretamente objeto e instância?",
+    "text": "Um objeto chamado Inimigo foi criado no editor e colocado cinco vezes em uma mesma fase. O objeto representa o modelo geral, enquanto cada elemento colocado na fase representa uma ocorrência individual. Qual alternativa explica corretamente essa diferença?",
     "options": [
       "O objeto define um elemento; a instância é uma ocorrência desse objeto na cena",
       "A instância define todas as cenas do projeto",
@@ -121,7 +121,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Uma spritesheet é:",
+    "text": "Para criar a animação de caminhada de um personagem, uma equipe reuniu vários desenhos em uma única imagem, organizados em quadros. O editor utiliza esses quadros em sequência para produzir o movimento. Como esse arquivo é chamado?",
     "options": [
       "uma imagem que reúne vários quadros",
       "uma camada exclusiva do HUD",
@@ -132,7 +132,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Oito quadros com duração de 0,10 segundo cada formam um ciclo de animação de:",
+    "text": "Uma animação possui oito quadros, e cada quadro permanece na tela durante 0,10 segundo. Qual é a duração de uma repetição completa dessa animação?",
     "options": [
       "0,80 segundo",
       "0,08 segundo",
@@ -143,7 +143,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Para evitar regras de animação incompatíveis, quando o personagem está morto a apostila recomenda que:",
+    "text": "Em um jogo, o personagem possui animações de parado, correndo, pulando e morto. Quando a condição morto acontece, a equipe quer impedir que outras regras alterem a animação. Qual medida é mais adequada?",
     "options": [
       "a animação de morte tenha prioridade sobre a de corrida",
       "todas as animações executem simultaneamente",
@@ -154,7 +154,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Qual definição está de acordo com a apostila?",
+    "text": "Um jogo digital reúne ações do jogador, regras que controlam o funcionamento e respostas apresentadas por imagens, sons ou textos. Qual definição está de acordo com essa explicação?",
     "options": [
       "Hitbox costuma ser área ofensiva e hurtbox a área que recebe ataques",
       "Hitbox é o HUD e hurtbox é a câmera",
@@ -165,7 +165,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Por que a máscara de colisão pode ser diferente do contorno visual completo do sprite?",
+    "text": "Durante um teste, o personagem parecia tocar no inimigo, mesmo quando havia uma pequena distância visual entre os dois. O problema estava relacionado à área usada para detectar o contato. Por que a máscara de colisão deve ser ajustada?",
     "options": [
       "Detalhes transparentes ou decorativos podem não precisar bloquear movimento",
       "Colisões só funcionam com imagens invisíveis",
@@ -176,7 +176,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Para manter vida, coleta e objetivo legíveis enquanto o mundo se move, esses elementos devem ficar em tratamento próprio de:",
+    "text": "Um jogo apresenta vida, pontuação e quantidade de cristais coletados em uma faixa fixa na parte superior da tela. Mesmo quando a câmera se movimenta pelo cenário, essas informações continuam visíveis. Em qual tipo de camada esses elementos devem ficar?",
     "options": [
       "HUD e camada apropriada",
       "parallax",
@@ -187,7 +187,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Em uma cena 2D convencional descrita no material, as coordenadas crescem como?",
+    "text": "Em uma cena 2D tradicional, um objeto foi movido para a direita e para baixo. O professor explicou que as posições são controladas por dois valores principais. Quais são esses valores?",
     "options": [
       "X para a direita e Y para baixo",
       "X para a esquerda e Y para cima",
@@ -198,7 +198,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Qual conceito de programação representa uma informação que pode mudar, como a vida atual?",
+    "text": "A variável vidaJogador começa com o valor 3. Após o personagem ser atingido, ela passa para 2. Que característica define corretamente uma variável?",
     "options": [
       "Variável",
       "Algoritmo",
@@ -209,7 +209,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Na lógica booleana, o operador E exige:",
+    "text": "Um evento deve ser executado somente quando o jogador estiver encostando em uma moeda e ainda possuir pelo menos uma vida. Qual operador lógico representa essa situação?",
     "options": [
       "condições simultâneas satisfeitas",
       "pelo menos uma condição verdadeira",
@@ -220,7 +220,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Em um evento comum do GDevelop, as ações são executadas quando:",
+    "text": "Um estudante criou o evento ‘Se o jogador estiver tocando no cristal, adicionar 1 à pontuação e apagar o cristal’. Qual é a função da condição nesse evento?",
     "options": [
       "as condições são satisfeitas",
       "a cena é fechada",
@@ -231,7 +231,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Um evento sem condições executa suas ações, normalmente:",
+    "text": "Um evento sem condições foi criado para aumentar lentamente o tempo de partida. Como esse evento normalmente se comportará durante a execução do jogo?",
     "options": [
       "em cada quadro",
       "uma única vez no projeto",
@@ -242,7 +242,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "A condição “Trigger once” serve para:",
+    "text": "Um aluno percebeu que, ao encostar em um item, uma mensagem aparecia várias vezes seguidas. Ele precisa fazer com que a mensagem seja exibida apenas uma vez para cada ocorrência do evento. Qual condição pode ajudar?",
     "options": [
       "limitar a repetição contínua enquanto uma condição permanece verdadeira",
       "gravar variáveis permanentemente",
@@ -253,7 +253,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No object picking, uma condição sobre objetos pode:",
+    "text": "Existem dez cristais iguais na fase. Quando o jogador toca apenas um deles, o jogo deve aumentar a pontuação e remover somente o cristal tocado. Qual recurso ajuda a selecionar a instância correta?",
     "options": [
       "filtrar quais instâncias participarão das ações seguintes",
       "converter instâncias em variáveis globais",
@@ -264,7 +264,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Se apenas um dos dez cristais encosta no jogador, a lógica correta de coleta deve:",
+    "text": "Durante o teste de coleta, apenas um dos dez cristais encosta no jogador. Para evitar que todos sejam removidos, como a lógica correta deve funcionar?",
     "options": [
       "agir sobre a instância selecionada que entrou em contato",
       "apagar todos os dez cristais",
@@ -275,7 +275,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Qual escopo é adequado para Inimigo.Vida quando cada inimigo precisa ter sua própria vida?",
+    "text": "Um jogo possui vários inimigos e cada um precisa perder sua própria vida quando for atingido. Qual escopo é adequado para a variável Inimigo.Vida?",
     "options": [
       "variável de objeto/instância",
       "variável global única",
@@ -286,7 +286,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Segundo a apostila, uma variável global:",
+    "text": "Uma pontuação precisa continuar disponível em diferentes cenas do jogo. O jogador coleta moedas na primeira fase e deve visualizar o total na segunda fase. Qual característica define uma variável global?",
     "options": [
       "não é automaticamente persistente depois que o jogo é fechado",
       "é sempre gravada no disco",
@@ -297,7 +297,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Para deslocamento manual independente da taxa de quadros, deve-se usar:",
+    "text": "Um personagem deve se mover a uma velocidade constante em computadores rápidos e lentos. O professor explicou que o movimento deve considerar o tempo entre os quadros. Qual recurso deve ser utilizado?",
     "options": [
       "deslocamento = velocidade por segundo × tempo do quadro",
       "deslocamento = velocidade ÷ quantidade de sprites",
@@ -308,7 +308,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No GDevelop, TimeDelta() fornece:",
+    "text": "Durante a programação do movimento, o desenvolvedor precisa saber quanto tempo passou desde o quadro anterior para manter a velocidade estável. O que a função TimeDelta() fornece?",
     "options": [
       "o intervalo de tempo do quadro",
       "o número total de cenas",
@@ -319,7 +319,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Por que reiniciar um temporizador em todos os quadros pode impedir que ele alcance o limite?",
+    "text": "Um temporizador foi criado para fazer um inimigo aparecer após cinco segundos. Entretanto, o aluno reinicia esse temporizador em todos os quadros. Qual será o provável resultado?",
     "options": [
       "Porque o tempo é continuamente reiniciado",
       "Porque todas as instâncias são duplicadas",
@@ -330,7 +330,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No exercício de plataforma, quais comportamentos devem ser associados ao jogador e ao chão, respectivamente?",
+    "text": "Em um jogo de plataforma, o personagem precisa andar, pular e respeitar a gravidade, enquanto o chão deve permitir que ele permaneça apoiado. Quais comportamentos são mais adequados?",
     "options": [
       "personagem de plataforma e plataforma",
       "plataforma e personagem de plataforma",
@@ -341,7 +341,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Misturar movimento manual, física e comportamento de plataforma controlando o mesmo objeto pode:",
+    "text": "Um desenvolvedor adicionou movimento manual, física e comportamento de plataforma ao mesmo personagem. O movimento ficou imprevisível e o personagem atravessava o chão. O que pode ter acontecido?",
     "options": [
       "produzir disputa entre sistemas de movimento",
       "garantir maior precisão automaticamente",
@@ -352,7 +352,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Uma máquina de estados para inimigos ajuda principalmente a:",
+    "text": "Um inimigo deve possuir os estados parado, perseguindo, atacando e derrotado. A cada situação, somente o comportamento correspondente deve ser executado. Para que serve uma máquina de estados nesse caso?",
     "options": [
       "separar comportamentos como patrulhar, perseguir, atacar e morrer",
       "substituir animações por uma imagem",
@@ -363,7 +363,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Pathfinding encontra caminhos, mas a apostila destaca que ele não define:",
+    "text": "Em um jogo, o sistema de pathfinding consegue calcular uma rota até o jogador. Porém, ainda é necessário decidir em que momento o inimigo deve atacar ou fugir. O que o pathfinding não define sozinho?",
     "options": [
       "a intenção do inimigo; o projeto ainda precisa decidir o destino e a resposta",
       "a geometria do caminho",
@@ -374,7 +374,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Uma interface acessível deve evitar depender exclusivamente:",
+    "text": "Uma interface mostra informações importantes usando somente cores: verde significa vida alta e vermelho significa vida baixa. Alguns jogadores podem ter dificuldade para distinguir essas cores. Do que uma interface acessível não deve depender exclusivamente?",
     "options": [
       "da cor para transmitir informação essencial",
       "de texto legível",
@@ -385,7 +385,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No sistema de áudio, a apostila recomenda:",
+    "text": "Ao coletar um cristal, o jogo aumenta a pontuação e toca um efeito sonoro curto. Esse som ajuda o jogador a perceber imediatamente que sua ação funcionou. Qual é a função desse recurso?",
     "options": [
       "separar música e efeitos e controlar seus volumes de forma independente",
       "usar um único som para todas as ações",
@@ -396,7 +396,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Para recuperar progresso entre sessões, deve-se utilizar:",
+    "text": "Um jogo deve guardar a fase alcançada e a pontuação mesmo depois que o jogador fechar o programa. Qual recurso é necessário para recuperar esse progresso entre sessões?",
     "options": [
       "armazenamento persistente planejado e recuperação dos dados",
       "somente uma variável global",
@@ -407,7 +407,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Se a pontuação cresce sem parar após uma única coleta, qual hipótese a apostila recomenda investigar?",
+    "text": "Durante os testes, a pontuação aumenta cinco vezes quando o jogador encosta em uma única moeda. Qual hipótese deve ser investigada primeiro?",
     "options": [
       "soma repetida por quadro",
       "resolução muito alta",
@@ -418,7 +418,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No projeto Guardião dos Cristais, tocar o portal com nove cristais deve resultar em:",
+    "text": "No projeto Guardião dos Cristais, o objetivo é coletar dez cristais antes de chegar ao portal. O jogador alcança o portal com apenas nove cristais. Qual comportamento é mais coerente com essa regra?",
     "options": [
       "a fase continuar",
       "vitória imediata",
@@ -429,7 +429,7 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "No Guardião dos Cristais, se o jogador perder a última vida junto ao portal, qual resultado esperado foi definido?",
+    "text": "No projeto Guardião dos Cristais, o jogador perde sua última vida ao tocar no portal sem cumprir o objetivo. Qual resultado deve respeitar simultaneamente a derrota e a regra do portal?",
     "options": [
       "derrota, devido à prioridade definida sobre a vitória",
       "vitória automática",
