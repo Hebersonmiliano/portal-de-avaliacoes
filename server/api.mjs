@@ -1,6 +1,6 @@
 import {classes,hex,randomToken,sha,constantEqual,passwordVerifier,attemptToken,arrangeQuestions} from './security.mjs';
 const origins=new Set(['https://hebersonmiliano.github.io','https://provabd.hebersonmiliano.chatgpt.site']);
-const DISCIPLINES=new Set(['banco-dados','jogos-digitais']);
+const DISCIPLINES=new Set(['banco-dados','jogos-digitais','desenvolvimento-web']);
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});
 function db(env){if(!env.DB)throw Error('Banco indisponível');return env.DB;}
 function disciplineOf(b){const d=b?.discipline||'banco-dados';return DISCIPLINES.has(d)?d:null;}
