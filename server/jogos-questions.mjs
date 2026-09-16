@@ -11,84 +11,95 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "O core loop de um jogo corresponde principalmente a:",
+    "text": "O core loop de um jogo é definido na apostila como:",
     "options": [
-      "sequência recorrente de ações que sustenta a experiência",
-      "lista de arquivos usados pelo projeto",
-      "ordem de carregamento das cenas",
-      "resolução escolhida para a tela",
-      "quantidade máxima de jogadores"
+      "a sequência recorrente que sustenta a experiência",
+      "a ordem fixa das cenas do projeto",
+      "a lista de recursos gráficos do jogo",
+      "a quantidade de fases publicadas",
+      "o sistema de salvamento automático"
     ],
     "correct": 0
   },
   {
-    "text": "Segundo a apostila, “mobile”, “multiplayer” e “pixel art” representam, respectivamente:",
+    "text": "Segundo a apostila, qual marco de 1962 se tornou referência dos jogos em computador?",
+    "options": [
+      "Spacewar!",
+      "Pong",
+      "Odyssey",
+      "Tennis for Two",
+      "Pac-Man"
+    ],
+    "correct": 0
+  },
+  {
+    "text": "Na classificação apresentada, “mobile”, “multiplayer” e “pixel art” correspondem, respectivamente, a:",
     "options": [
       "plataforma, modo de participação e linguagem visual",
       "gênero, plataforma e mecânica",
       "mecânica, gênero e plataforma",
-      "linguagem visual, gênero e modo",
-      "plataforma, gênero e engine"
+      "linguagem visual, gênero e engine",
+      "modo, engine e plataforma"
     ],
     "correct": 0
   },
   {
-    "text": "Em um jogo de plataforma, quais sistemas aparecem como centrais no primeiro estudo?",
+    "text": "Em um jogo de plataforma, quais sistemas aparecem como centrais no primeiro exercício sugerido?",
     "options": [
-      "Gravidade, salto, chão e câmera",
-      "Inventário, diálogo, economia e crafting",
-      "Turnos, recursos e regras de alvo",
-      "Texto, escolhas e estados da história",
-      "Rotas, alcance e prioridade de torres"
+      "gravidade, salto, chão e câmera",
+      "inventário, diálogo, economia e crafting",
+      "turnos, recursos e regras de alvo",
+      "texto, escolhas e estados da história",
+      "rotas, alcance e prioridade"
     ],
     "correct": 0
   },
   {
-    "text": "Qual área da produção de jogos organiza desafios no espaço?",
+    "text": "Qual área da criação de jogos organiza desafios no espaço?",
     "options": [
       "Level design",
       "Áudio",
-      "QA",
       "Narrativa",
-      "Programação"
+      "QA",
+      "Produção"
     ],
     "correct": 0
   },
   {
-    "text": "No ciclo de prototipação proposto, o que deve acontecer antes de produzir grande quantidade de arte e conteúdo?",
+    "text": "No ciclo de prototipação proposto, antes de produzir muita arte e conteúdo deve-se:",
     "options": [
-      "Validar a base jogável com protótipo e observação",
-      "Finalizar todas as fases",
-      "Publicar a versão comercial",
-      "Criar primeiro todos os efeitos sonoros",
-      "Implementar multiplayer"
+      "testar uma hipótese com protótipo simples e observar alguém jogando",
+      "finalizar todas as fases",
+      "publicar a versão comercial",
+      "criar todos os efeitos sonoros",
+      "implementar multiplayer"
     ],
     "correct": 0
   },
   {
     "text": "O GDevelop é apresentado na apostila como:",
     "options": [
-      "motor/editor de jogos com programação visual por eventos e possibilidade de JavaScript",
-      "editor exclusivo de imagens pixel art",
+      "motor e editor de jogos com programação visual por eventos e possibilidade de JavaScript",
+      "editor exclusivo de pixel art",
       "banco de dados para jogos online",
       "linguagem textual que substitui JavaScript",
-      "serviço apenas para jogos 3D"
+      "ferramenta apenas para jogos 3D"
     ],
     "correct": 0
   },
   {
-    "text": "No GDevelop, qual área é usada para escrever condições e ações?",
+    "text": "No editor do GDevelop, qual área é usada para escrever condições e ações?",
     "options": [
       "Editor de eventos",
       "Lista de objetos",
       "Prévia",
-      "Gerenciador de recursos",
+      "Gerenciador do projeto",
       "Propriedades da instância"
     ],
     "correct": 0
   },
   {
-    "text": "No exemplo cristal.png → Cristal → dez cristais na fase, esses três elementos são, respectivamente:",
+    "text": "No exemplo cristal.png → Cristal → dez cristais na fase, esses elementos são, respectivamente:",
     "options": [
       "recurso, objeto e instâncias",
       "objeto, recurso e comportamentos",
@@ -101,11 +112,11 @@ export const jogosQuestions = [
   {
     "text": "Qual afirmação diferencia corretamente objeto e instância?",
     "options": [
-      "O objeto define o elemento; a instância é uma ocorrência dele na cena",
-      "A instância define todas as cenas e o objeto apenas storage",
-      "Objeto e instância sempre identicais",
-      "O objeto existe somente durante a prévia",
-      "A instância não pode possuir posição própria"
+      "O objeto define um elemento; a instância é uma ocorrência desse objeto na cena",
+      "A instância define todas as cenas do projeto",
+      "Objeto e instância são sempre sinônimos",
+      "O objeto só existe durante a prévia",
+      "A instância não pode possuir dados próprios"
     ],
     "correct": 0
   },
@@ -115,7 +126,7 @@ export const jogosQuestions = [
       "uma imagem que reúne vários quadros",
       "uma camada exclusiva do HUD",
       "um tipo de variável global",
-      "uma máscara usada apenas para colisão",
+      "uma máscara de colisão",
       "um temporizador de animação"
     ],
     "correct": 0
@@ -132,46 +143,46 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Para evitar conflito visual quando o personagem morreu, a apostila recomenda que:",
+    "text": "Para evitar regras de animação incompatíveis, quando o personagem está morto a apostila recomenda que:",
     "options": [
       "a animação de morte tenha prioridade sobre a de corrida",
-      "todas as animações sejam executadas simultaneamente",
-      "a animação de corrida continue indefinidamente",
+      "todas as animações executem simultaneamente",
+      "a corrida continue indefinidamente",
       "a spritesheet seja removida",
-      "a câmera controle a animação"
+      "a câmera escolha a animação"
     ],
     "correct": 0
   },
   {
-    "text": "Qual definição está correta?",
+    "text": "Qual definição está de acordo com a apostila?",
     "options": [
-      "Hitbox costuma representar área ofensiva e hurtbox a área que recebe ataques",
-      "Hitbox é a câmera e hurtbox é o HUD",
-      "Hitbox é sempre a imagem completa e hurtbox é o áudio",
-      "Hitbox e hurtbox são nomes de cenas",
-      "Hurtbox serve apenas para salvar o jogo"
+      "Hitbox costuma ser área ofensiva e hurtbox a área que recebe ataques",
+      "Hitbox é o HUD e hurtbox é a câmera",
+      "Hitbox é sempre a imagem inteira",
+      "Hitbox e hurtbox são tipos de cena",
+      "Hurtbox serve para salvar o jogo"
     ],
     "correct": 0
   },
   {
-    "text": "Por que uma máscara de colisão pode ser diferente do contorno visual completo do sprite?",
+    "text": "Por que a máscara de colisão pode ser diferente do contorno visual completo do sprite?",
     "options": [
-      "Porque detalhes transparentes ou decorativos podem não precisar bloquear movimento",
-      "Porque colisões só funcionam com imagens invisíveis",
-      "Porque a máscara controla exclusivamente o volume do áudio",
-      "Porque todo sprite precisa ter máscara retangular do tamanho da tela",
-      "Porque a máscara define a pontuação"
+      "Detalhes transparentes ou decorativos podem não precisar bloquear movimento",
+      "Colisões só funcionam com imagens invisíveis",
+      "A máscara controla o volume do áudio",
+      "Todo sprite precisa de máscara do tamanho da tela",
+      "A máscara define a pontuação"
     ],
     "correct": 0
   },
   {
-    "text": "Para manter vida e pontuação visíveis enquanto o mundo se move, esses elementos devem receber tratamento de:",
+    "text": "Para manter vida, coleta e objetivo legíveis enquanto o mundo se move, esses elementos devem ficar em tratamento próprio de:",
     "options": [
-      "HUD/interface em camada apropriada",
-      "parallax do fundo",
+      "HUD e camada apropriada",
+      "parallax",
       "hitbox ofensiva",
       "pathfinding",
-      "spritesheet"
+      "tilemap"
     ],
     "correct": 0
   },
@@ -200,11 +211,11 @@ export const jogosQuestions = [
   {
     "text": "Na lógica booleana, o operador E exige:",
     "options": [
-      "que as condições envolvidas sejam satisfeitas simultaneamente",
-      "que pelo menos uma condição seja verdadeira",
-      "que a condição seja invertida",
-      "que nenhuma condição seja testada",
-      "que a ação execute uma única vez"
+      "condições simultâneas satisfeitas",
+      "pelo menos uma condição verdadeira",
+      "inversão da condição",
+      "nenhuma condição testada",
+      "execução apenas uma vez"
     ],
     "correct": 0
   },
@@ -212,7 +223,7 @@ export const jogosQuestions = [
     "text": "Em um evento comum do GDevelop, as ações são executadas quando:",
     "options": [
       "as condições são satisfeitas",
-      "a cena é fechada obrigatoriamente",
+      "a cena é fechada",
       "o projeto é exportado",
       "todas as variáveis são globais",
       "o profiler está aberto"
@@ -220,24 +231,24 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Um evento sem condições tende a executar suas ações:",
+    "text": "Um evento sem condições executa suas ações, normalmente:",
     "options": [
       "em cada quadro",
-      "somente uma vez em toda a instalação",
+      "uma única vez no projeto",
       "apenas ao fechar o jogo",
-      "somente após exportar",
-      "apenas quando o jogador perde"
+      "somente após exportação",
+      "apenas na derrota"
     ],
     "correct": 0
   },
   {
-    "text": "A condição “Trigger once” é usada principalmente para:",
+    "text": "A condição “Trigger once” serve para:",
     "options": [
       "limitar a repetição contínua enquanto uma condição permanece verdadeira",
-      "salvar permanentemente todas as variáveis",
-      "criar automaticamente uma nova cena",
+      "gravar variáveis permanentemente",
+      "criar uma cena automaticamente",
       "substituir qualquer temporizador",
-      "selecionar todos os objetos da cena"
+      "selecionar todos os objetos"
     ],
     "correct": 0
   },
@@ -245,19 +256,19 @@ export const jogosQuestions = [
     "text": "No object picking, uma condição sobre objetos pode:",
     "options": [
       "filtrar quais instâncias participarão das ações seguintes",
-      "transformar todas as instâncias em variáveis globais",
+      "converter instâncias em variáveis globais",
       "salvar o projeto automaticamente",
-      "alterar a resolução do jogo",
+      "alterar a resolução",
       "criar uma spritesheet"
     ],
     "correct": 0
   },
   {
-    "text": "Se dez cristais existem e apenas um encosta no jogador, a lógica de coleta deve:",
+    "text": "Se apenas um dos dez cristais encosta no jogador, a lógica correta de coleta deve:",
     "options": [
-      "afetar a instância selecionada que entrou em contato",
-      "apagar obrigatoriamente todos os dez cristais",
-      "somar dez pontos independentemente do contato",
+      "agir sobre a instância selecionada que entrou em contato",
+      "apagar todos os dez cristais",
+      "somar dez pontos",
       "reiniciar a cena",
       "converter os cristais em objetos globais"
     ],
@@ -266,27 +277,27 @@ export const jogosQuestions = [
   {
     "text": "Qual escopo é adequado para Inimigo.Vida quando cada inimigo precisa ter sua própria vida?",
     "options": [
-      "Variável de objeto/instância",
-      "Variável global única",
-      "Variável de cena compartilhada obrigatoriamente",
-      "Constante do projeto",
-      "Temporizador global"
+      "variável de objeto/instância",
+      "variável global única",
+      "variável de cena compartilhada obrigatoriamente",
+      "constante do projeto",
+      "temporizador global"
     ],
     "correct": 0
   },
   {
-    "text": "Uma variável global, segundo a apostila:",
+    "text": "Segundo a apostila, uma variável global:",
     "options": [
-      "não equivale automaticamente a armazenamento permanente entre sessões",
-      "é sempre gravada no disco ao fechar o jogo",
+      "não é automaticamente persistente depois que o jogo é fechado",
+      "é sempre gravada no disco",
       "só pode armazenar texto",
       "não pode ser usada entre cenas",
-      "é exclusiva de objetos Sprite"
+      "é exclusiva de sprites"
     ],
     "correct": 0
   },
   {
-    "text": "Para deslocamento manual independente da taxa de quadros, a relação indicada é:",
+    "text": "Para deslocamento manual independente da taxa de quadros, deve-se usar:",
     "options": [
       "deslocamento = velocidade por segundo × tempo do quadro",
       "deslocamento = velocidade ÷ quantidade de sprites",
@@ -308,64 +319,64 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Por que não se deve reiniciar um temporizador em todos os quadros quando se espera que ele alcance um limite?",
+    "text": "Por que reiniciar um temporizador em todos os quadros pode impedir que ele alcance o limite?",
     "options": [
-      "Porque ele pode nunca atingir o tempo necessário",
-      "Porque isso duplica todas as instâncias",
-      "Porque remove a câmera",
-      "Porque transforma a variável em texto",
-      "Porque desativa o teclado"
+      "Porque o tempo é continuamente reiniciado",
+      "Porque todas as instâncias são duplicadas",
+      "Porque a câmera é removida",
+      "Porque a variável vira texto",
+      "Porque o teclado é desativado"
     ],
     "correct": 0
   },
   {
-    "text": "No exercício de plataforma, quais comportamentos devem ser associados ao jogador e ao chão?",
+    "text": "No exercício de plataforma, quais comportamentos devem ser associados ao jogador e ao chão, respectivamente?",
     "options": [
-      "Personagem de plataforma e plataforma, respectivamente",
-      "Plataforma e personagem de plataforma, respectivamente",
-      "Pathfinding e tween",
-      "Física e multiplayer obrigatoriamente",
-      "Storage e partículas"
+      "personagem de plataforma e plataforma",
+      "plataforma e personagem de plataforma",
+      "pathfinding e tween",
+      "física e multiplayer",
+      "storage e partículas"
     ],
     "correct": 0
   },
   {
-    "text": "Misturar movimento manual, física e comportamento de plataforma controlando simultaneamente o mesmo objeto pode:",
+    "text": "Misturar movimento manual, física e comportamento de plataforma controlando o mesmo objeto pode:",
     "options": [
-      "causar disputa entre sistemas de movimento",
-      "melhorar automaticamente a precisão",
-      "eliminar qualquer colisão",
+      "produzir disputa entre sistemas de movimento",
+      "garantir maior precisão automaticamente",
+      "eliminar colisões",
       "salvar o estado do objeto",
       "garantir 60 FPS"
     ],
     "correct": 0
   },
   {
-    "text": "Uma máquina de estados para inimigos é útil porque:",
+    "text": "Uma máquina de estados para inimigos ajuda principalmente a:",
     "options": [
-      "separa comportamentos como patrulhar, perseguir, atacar e morrer",
-      "substitui todas as animações por uma única imagem",
-      "serve apenas para exportação web",
-      "elimina a necessidade de condições",
-      "armazena arquivos de áudio"
+      "separar comportamentos como patrulhar, perseguir, atacar e morrer",
+      "substituir animações por uma imagem",
+      "exportar somente para web",
+      "eliminar condições",
+      "armazenar áudio"
     ],
     "correct": 0
   },
   {
-    "text": "Pathfinding, por si só, determina principalmente:",
+    "text": "Pathfinding encontra caminhos, mas a apostila destaca que ele não define:",
     "options": [
-      "um caminho; a intenção e o destino ainda precisam ser definidos pelo projeto",
-      "a narrativa completa do inimigo",
-      "o volume de cada efeito",
-      "a pontuação final do jogador",
-      "a spritesheet do personagem"
+      "a intenção do inimigo; o projeto ainda precisa decidir o destino e a resposta",
+      "a geometria do caminho",
+      "a posição atual do objeto",
+      "a possibilidade de não existir rota",
+      "o deslocamento até o destino"
     ],
     "correct": 0
   },
   {
     "text": "Uma interface acessível deve evitar depender exclusivamente:",
     "options": [
-      "da cor para comunicar informação essencial",
+      "da cor para transmitir informação essencial",
       "de texto legível",
       "de contraste",
       "de símbolos combinados com cor",
@@ -374,46 +385,35 @@ export const jogosQuestions = [
     "correct": 0
   },
   {
-    "text": "Ao pausar um jogo, por que é necessário decidir quais sistemas devem parar?",
-    "options": [
-      "Porque cobrir a tela não garante que movimento, inimigos e temporizadores parem",
-      "Porque a pausa apaga automaticamente todas as cenas",
-      "Porque o HUD deixa de existir",
-      "Porque todo áudio precisa ser excluído",
-      "Porque o jogo é exportado novamente"
-    ],
-    "correct": 0
-  },
-  {
     "text": "No sistema de áudio, a apostila recomenda:",
     "options": [
-      "separar música e efeitos para controlar volumes independentemente",
-      "usar apenas um som para todas as ações",
-      "tocar continuamente o som enquanto houver contato",
+      "separar música e efeitos e controlar seus volumes de forma independente",
+      "usar um único som para todas as ações",
+      "tocar som continuamente enquanto houver contato",
       "eliminar feedback visual quando houver áudio",
       "usar áudio somente no menu"
     ],
     "correct": 0
   },
   {
-    "text": "Para recuperar progresso depois de fechar e abrir o jogo, deve-se usar:",
+    "text": "Para recuperar progresso entre sessões, deve-se utilizar:",
     "options": [
-      "armazenamento persistente deliberado",
-      "apenas uma variável global",
-      "somente object picking",
+      "armazenamento persistente planejado e recuperação dos dados",
+      "somente uma variável global",
+      "apenas object picking",
       "uma máscara de colisão",
       "parallax"
     ],
     "correct": 0
   },
   {
-    "text": "Se a pontuação cresce sem parar após uma única coleta, qual hipótese deve ser investigada primeiro?",
+    "text": "Se a pontuação cresce sem parar após uma única coleta, qual hipótese a apostila recomenda investigar?",
     "options": [
-      "A soma está sendo repetida a cada quadro",
-      "A resolução está muito alta",
-      "A spritesheet possui poucos quadros",
-      "O HUD está em uma camada separada",
-      "O jogo possui uma cena de vitória"
+      "soma repetida por quadro",
+      "resolução muito alta",
+      "spritesheet curta",
+      "HUD em camada separada",
+      "existência de cena de vitória"
     ],
     "correct": 0
   },
@@ -424,18 +424,18 @@ export const jogosQuestions = [
       "vitória imediata",
       "derrota imediata",
       "reinício automático",
-      "apagamento do jogador"
+      "remoção do jogador"
     ],
     "correct": 0
   },
   {
-    "text": "No Guardião dos Cristais, se o jogador perder a última vida ao mesmo tempo em que atende à condição do portal, o critério definido determina:",
+    "text": "No Guardião dos Cristais, se o jogador perder a última vida junto ao portal, qual resultado esperado foi definido?",
     "options": [
-      "derrota, pois ela tem prioridade sobre a vitória",
-      "vitória sempre",
+      "derrota, devido à prioridade definida sobre a vitória",
+      "vitória automática",
       "empate sem transição",
       "nova coleta automática",
-      "retorno obrigatório ao menu"
+      "retorno direto ao menu"
     ],
     "correct": 0
   }
