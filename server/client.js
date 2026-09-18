@@ -78,7 +78,6 @@ async function copyTeacherCode(){
 }
 async function logoutTeacher(){try{await request('/api/teacher/logout',{},true);}finally{teacherToken='';records=[];usedCodes=[];clearInterval(refreshTimer);location.reload();}}
 async function exportBackup(){if(!teacherToken)return;try{await request('/api/teacher/results',undefined,true);const old=stored('bd-results',[]);download('recuperacao-provas.json',JSON.stringify({records:old},null,2),'application/json');}catch(e){$('teacherStatus').textContent=e.message;}}
-function exportPending(){if(draft)download('copia-prova-pendente.json',JSON.stringify({pending:draft},null,2),'application/json');}
 async function importBackup(input){const file=input.files[0];if(!file)return;try{if(file.size>200000)throw Error('Arquivo muito grande.');const data=JSON.parse(await file.text());const r=await request('/api/teacher/import',data,true);await refreshResults();$('importStatus').textContent=`${r.imported} prova(s) recuperada(s). Registros repetidos não foram duplicados.`;}catch(e){$('importStatus').textContent=e.message;}finally{input.value='';}}
 const previous=stored('bd-draft-v3',null);if(previous?.id&&previous.token&&previous.questions?.length===40&&previous.answers?.length===40){draft=previous;showExam();}
 
