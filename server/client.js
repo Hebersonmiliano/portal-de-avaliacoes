@@ -38,8 +38,8 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('dragstart',e=>{if(examActive)e.preventDefault();});
 window.addEventListener('online',()=>{if(draft?.pending&&!sending)submitExam(null,draft.forced);});
 window.addEventListener('beforeunload',e=>{if(draft){e.preventDefault();e.returnValue='';}});
-function openTeacher(){$('teacherLogin').classList.remove('hidden');$('teacherPassword').focus();}
-async function loginTeacher(event){event.preventDefault();const password=$('teacherPassword').value;try{teacherToken=(await request('/api/login',{password})).token;$('teacherPassword').value='';$('teacherLogin').classList.add('hidden');$('start').classList.add('hidden');$('teacher').classList.remove('hidden');await refreshResults();clearInterval(refreshTimer);refreshTimer=setInterval(()=>refreshResults(),15000);}catch(e){showError('loginError',e.message);}}
+function openTeacher(){$('teacherLogin').classList.remove('hidden');$('teacherUsername').focus();}
+async function loginTeacher(event){event.preventDefault();const username=$('teacherUsername').value.trim(),password=$('teacherPassword').value;try{teacherToken=(await request('/api/login',{username,password})).token;$('teacherPassword').value='';$('teacherLogin').classList.add('hidden');$('start').classList.add('hidden');$('teacher').classList.remove('hidden');await refreshResults();clearInterval(refreshTimer);refreshTimer=setInterval(()=>refreshResults(),15000);}catch(e){showError('loginError',e.message);}}
 async function refreshResults(){try{const data=await request('/api/teacher/results',undefined,true);records=data.records;usedCodes=data.usedCodes;renderTeacher();$('teacherStatus').textContent='Resultados do banco central • atualizado às '+new Date().toLocaleTimeString('pt-BR');}catch(e){$('teacherStatus').textContent=e.message;if(!$('teacherBody').innerHTML)renderTeacher();}}
 function renderTeacher(){
  if(!$('codeGenerator')){

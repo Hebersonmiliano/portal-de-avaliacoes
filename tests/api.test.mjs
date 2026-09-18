@@ -71,4 +71,19 @@ test('limite de login, corpo inválido, origem e indisponibilidade',async()=>{
  const unavailable=await api(new Request('https://provabd.hebersonmiliano.chatgpt.site/api/health'),{});assert.equal(unavailable.status,503);
  DB.sqlite.close();
 });
+test('administrador cadastra, desativa e reativa professores com login próprio',async()=>{
+ const {DB,call,token}=await setup();
+ assert.equal((await call('teacher/accounts',undefined,token)).data.teachers.length,0);
+ const created=await call('teacher/accounts',{name:'Professora Maria',username:'maria.silva',password:'senha123'},token);assert.equal(created.status,200);
+ assert.equal((await call('teacher/accounts',{name:'Outra Maria',username:'maria.silva',password:'outrasenha'},token)).status,409);
+ const login=await call('login',{username:'maria.silva',password:'senha123'},undefined,'192.0.2.77');assert.equal(login.status,200);assert.equal(login.data.role,'teacher');assert.equal(login.data.name,'Professora Maria');
+ assert.equal((await call('teacher/results',undefined,login.data.token)).status,200);
+ assert.equal((await call('teacher/accounts',undefined,login.data.token)).status,403);
+ assert.equal((await call('teacher/accounts/status',{username:'maria.silva',active:false},token)).status,200);
+ assert.equal((await call('teacher/results',undefined,login.data.token)).status,401);
+ assert.equal((await call('login',{username:'maria.silva',password:'senha123'},undefined,'192.0.2.78')).status,401);
+ assert.equal((await call('teacher/accounts/status',{username:'maria.silva',active:true},token)).status,200);
+ assert.equal((await call('login',{username:'maria.silva',password:'senha123'},undefined,'192.0.2.79')).status,200);
+ DB.sqlite.close();
+});
 
