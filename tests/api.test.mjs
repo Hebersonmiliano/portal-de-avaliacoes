@@ -41,8 +41,11 @@ test('códigos privados, reserva, identidade, correção e reenvio idempotente',
  assert.equal((await call('start',student)).status,409);
  await call('teacher/reset',{codigo:student.codigo},token);
  const next=await call('start',{...student,nonce:randomToken()});assert.equal(next.status,200);assert.notEqual(next.data.id,body.id);
- await call('teacher/reset',{codigo:student.codigo},token);
+ const blocked=await call('block',{...student,id:next.data.id,token:next.data.token,saidas:2});assert.equal(blocked.status,200);assert.equal(blocked.data.blocked,true);
+ const blockedPanel=(await call('teacher/results',undefined,token)).data;assert.equal(blockedPanel.blockedAttempts.length,1);assert.equal(blockedPanel.blockedAttempts[0].name,student.name);assert.equal(blockedPanel.blockedAttempts[0].codigo,student.codigo);
  assert.equal((await call('submit',{...body,id:next.data.id,token:next.data.token})).status,409);
+ await call('teacher/reset',{codigo:student.codigo},token);
+ assert.equal((await call('teacher/results',undefined,token)).data.blockedAttempts.length,0);
  assert.equal((await call('teacher/results',undefined,token)).data.records.length,1);
  await call('teacher/logout',{},token);assert.equal((await call('teacher/results',undefined,token)).status,401);
  DB.sqlite.close();
