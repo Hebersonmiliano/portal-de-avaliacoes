@@ -86,4 +86,24 @@ test('administrador cadastra, desativa e reativa professores com login próprio'
  assert.equal((await call('login',{username:'maria.silva',password:'senha123'},undefined,'192.0.2.79')).status,200);
  DB.sqlite.close();
 });
+test('cada professor cria turmas e vê somente seus próprios alunos',async()=>{
+ const {DB,call,token}=await setup();await call('teacher/bank',{questions:bank},token);
+ for(const [name,username] of [['Professor A','prof.a'],['Professor B','prof.b']])await call('teacher/accounts',{name,username,password:'senha123'},token);
+ const loginA=(await call('login',{username:'prof.a',password:'senha123'},undefined,'192.0.2.81')).data;
+ const loginB=(await call('login',{username:'prof.b',password:'senha123'},undefined,'192.0.2.82')).data;
+ await call('teacher/classes',{name:'Turma do Professor A'},loginA.token);
+ await call('teacher/classes',{name:'Turma do Professor B'},loginB.token);
+ assert.deepEqual((await call('teacher/classes',undefined,loginA.token)).data.classes.map(c=>c.name),['Turma do Professor A']);
+ assert.equal((await call('teacher/generate-code',{turma:'Turma do Professor B'},loginA.token)).status,403);
+ const codeA=(await call('teacher/generate-code',{turma:'Turma do Professor A'},loginA.token)).data.codigo;
+ const student={name:'Aluna da Turma A',turma:'Turma do Professor A',codigo:codeA,nonce:randomToken()};
+ const started=(await call('start',student)).data;
+ const answers=started.questions.map(q=>q.options.indexOf('Resposta de teste'));
+ assert.equal((await call('submit',{...student,id:started.id,token:started.token,answers,saidas:0,forced:false})).status,200);
+ assert.equal((await call('teacher/results',undefined,loginA.token)).data.records.length,1);
+ assert.equal((await call('teacher/results',undefined,loginB.token)).data.records.length,0);
+ assert.equal((await call('teacher/results',undefined,token)).data.records.length,1);
+ assert.equal((await call('teacher/reset',{codigo:codeA},loginB.token)).status,403);
+ DB.sqlite.close();
+});
 
