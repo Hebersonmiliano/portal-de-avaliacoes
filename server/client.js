@@ -2,14 +2,14 @@ const API='https://provabd.hebersonmiliano.chatgpt.site';
 const $=id=>document.getElementById(id);
 const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const formatScore=n=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-let draft=null,examActive=false,sending=false,teacherToken='',records=[],usedCodes=[],refreshTimer;
+let draft=null,examActive=false,sending=false,fullscreenStarted=false,lastSecurityEvent=0,teacherToken='',records=[],usedCodes=[],refreshTimer;
 function stored(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
 function saveDraft(){try{localStorage.setItem('bd-draft-v3',JSON.stringify(draft));return true;}catch{$('submitErr').textContent='O navegador não permite salvar uma cópia local. Mantenha esta página aberta até confirmar o envio.';$('submitErr').classList.remove('hidden');return false;}}
 async function request(path,body,teacher=false){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);try{const r=await fetch(API+path,{method:body===undefined?'GET':'POST',headers:{...(body!==undefined?{'Content-Type':'application/json'}:{}),...(teacher?{Authorization:'Bearer '+teacherToken}:{})},body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});const data=await r.json();if(!r.ok)throw Error(data.error||'Falha ao acessar o servidor.');return data;}catch(e){if(e instanceof TypeError||e.name==='AbortError')throw Error('Sem confirmação do servidor. Verifique a internet e tente novamente. Suas respostas foram preservadas.');throw e;}finally{clearTimeout(timer);}}
 function showError(id,message){$(id).textContent=message;$(id).classList.remove('hidden');}
 async function startExam(){
  const b={name:$('student').value.trim(),turma:$('classSelect').value,codigo:$('accessCode').value.trim().toUpperCase()};
- $('startErr').classList.add('hidden');const btn=$('start').querySelector('button');btn.disabled=true;btn.textContent='Verificando código…';
+ $('startErr').classList.add('hidden');const btn=$('start').querySelector('button');btn.disabled=true;btn.textContent='Verificando código…';if(b.name.length>=3&&b.turma&&b.codigo&&document.documentElement.requestFullscreen&&!document.fullscreenElement){try{await document.documentElement.requestFullscreen();fullscreenStarted=true}catch{}}
  try{const pending=stored('bd-start-v3',null);b.nonce=pending&&pending.name===b.name&&pending.turma===b.turma&&pending.codigo===b.codigo?pending.nonce:Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');try{localStorage.setItem('bd-start-v3',JSON.stringify(b));}catch{}const data=await request('/api/start',b);draft={...b,id:data.id,token:data.token,questions:data.questions,answers:Array(40).fill(null),saidas:0,forced:false,pending:false};saveDraft();showExam();}catch(e){showError('startErr',e.message);}finally{btn.disabled=false;btn.textContent='Começar prova';}
 }
 const contexts=['Durante o desenvolvimento de um sistema, a equipe precisa organizar as informações de forma correta. Considere a situação e responda:','Em uma atividade prática de Banco de Dados, uma turma analisa um sistema do dia a dia. Leia o caso com atenção e escolha a alternativa correta:','Uma empresa está melhorando seu sistema para evitar erros nos cadastros. Com base nesse cenário, responda:','Ao construir um aplicativo, os dados precisam ser armazenados e consultados com facilidade. Observe a situação apresentada:','Em uma aula de Desenvolvimento de Sistemas, o professor apresenta o exemplo a seguir para revisar conceitos básicos. Assinale a resposta correta:'];
@@ -26,7 +26,9 @@ async function submitExam(e,force=false){
   try{localStorage.removeItem('bd-draft-v3');localStorage.removeItem('bd-start-v3');}catch{}draft=null;
  }catch(e){showError('submitErr',e.message);}finally{sending=false;$('sendButton').disabled=false;$('sendButton').textContent='Tentar enviar novamente';}
 }
-document.addEventListener('visibilitychange',()=>{if(!examActive||document.visibilityState!=='hidden')return;draft.saidas++;saveDraft();if(draft.saidas>=2){draft.forced=true;submitExam(null,true);}else{$('securityNotice').textContent='Você saiu da página da prova. Se sair novamente, a prova será encerrada e o envio será iniciado.';$('securityNotice').className='notice security-alert';}});
+function recordExamExit(message){const now=Date.now();if(!examActive||now-lastSecurityEvent<1200)return;lastSecurityEvent=now;draft.saidas++;saveDraft();if(draft.saidas>=2){draft.forced=true;submitExam(null,true);}else{$('securityNotice').textContent=message+' Se isso acontecer novamente, a prova será encerrada e o envio será iniciado.';$('securityNotice').className='notice security-alert';}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')recordExamExit('Você saiu da página da prova.')});
+document.addEventListener('fullscreenchange',()=>{if(fullscreenStarted&&!document.fullscreenElement)recordExamExit('Você saiu do modo tela cheia. Não é permitido dividir a tela durante a prova.')});
 for(const name of ['copy','cut','paste','contextmenu','selectstart','dragstart'])document.addEventListener(name,e=>{if(examActive)e.preventDefault();});
 // Dificulta a abertura das ferramentas de desenvolvedor durante a prova.
 // A correção e a nota continuam protegidas no servidor.
