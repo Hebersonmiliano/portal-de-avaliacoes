@@ -46,7 +46,7 @@ test('códigos privados, reserva, identidade, correção e reenvio idempotente',
  assert.equal((await call('submit',{...body,id:next.data.id,token:next.data.token})).status,409);
  await call('teacher/reset',{codigo:student.codigo},token);
  assert.equal((await call('teacher/results',undefined,token)).data.blockedAttempts.length,0);
- assert.equal((await call('teacher/results',undefined,token)).data.records.length,1);
+  assert.equal((await call('teacher/results',undefined,token)).data.records.length,1);
  await call('teacher/logout',{},token);assert.equal((await call('teacher/results',undefined,token)).status,401);
  DB.sqlite.close();
 });
@@ -105,8 +105,10 @@ test('cada professor cria turmas e vê somente seus próprios alunos',async()=>{
  assert.equal((await call('submit',{...student,id:started.id,token:started.token,answers,saidas:0,forced:false})).status,200);
  assert.equal((await call('teacher/results',undefined,loginA.token)).data.records.length,1);
  assert.equal((await call('teacher/results',undefined,loginB.token)).data.records.length,0);
- assert.equal((await call('teacher/results',undefined,token)).data.records.length,1);
+  assert.equal((await call('teacher/results',undefined,token)).data.records.length,0);
+  assert.equal((await call('teacher/reset',{codigo:codeA},token)).status,403);
  assert.equal((await call('teacher/reset',{codigo:codeA},loginB.token)).status,403);
  DB.sqlite.close();
 });
+
 
