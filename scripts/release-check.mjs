@@ -78,5 +78,20 @@ for (const marker of ['const questions=', 'Arena dos Desafios', 'Floresta do Des
 const gamesExamTest = read('teste/jogos-digitais.html');
 for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa dos 40 desafios', 'Reino do Game Design', 'RANK ${rank}', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(gamesExamTest, marker, 'teste/jogos-digitais.html');
 
-console.log('Homologação aprovada: 7 disciplinas, imagens, links e painel verificados.');
+requireText(testIndex, '8 DISCIPLINAS', 'teste/index.html');
+for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
+  requireFile(`teste/${file}`);
+  requireText(testIndex, `href="${file}"`, 'teste/index.html');
+}
+const pythonTrail = read('teste/logica-python-trilha.html');
+for (const marker of ['Python Quest: Jornada do Código', 'Algoritmos e pensamento lógico', 'Python avançado e qualidade', 'portal-teste-python-trilha-v2']) requireText(pythonTrail, marker, 'teste/logica-python-trilha.html');
+const pythonSimulation = read('teste/logica-python-simulado.html');
+for (const marker of ['Arena Python', 'Vale da Lógica', 'Torre Avançada', 'portal-teste-python-simulado-v2']) requireText(pythonSimulation, marker, 'teste/logica-python-simulado.html');
+const pythonExam = read('teste/logica-python.html');
+for (const marker of ['Desafio Final: Torre Python', "DISC='logica-python'", 'Mapa dos 40 desafios', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(pythonExam, marker, 'teste/logica-python.html');
+const testPanel = read('teste/painel-professor.html');
+requireText(testPanel, "id:'logica-python'", 'teste/painel-professor.html');
+if (index.includes('logica-python')) throw new Error('Lógica e Python foi incluída na produção antes da aprovação da homologação.');
+
+console.log('Homologação aprovada: produção preservada e Lógica/Python completa no ambiente de teste.');
 
