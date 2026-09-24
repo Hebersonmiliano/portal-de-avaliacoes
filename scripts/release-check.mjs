@@ -56,5 +56,15 @@ const panel = read('painel-professor.html');
 for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
 for (const marker of ['Gerenciar professores','createTeacher','loadTeachers','setTeacherStatus']) requireText(panel, marker, 'painel-professor.html');
 
+for (const file of ['teste/jogos-digitais-trilha.html', 'teste/jogos-digitais-simulado.html', 'teste/jogos-digitais.html']) requireFile(file);
+const testIndex = read('teste/index.html');
+for (const link of ['jogos-digitais-trilha.html', 'jogos-digitais-simulado.html', 'jogos-digitais.html']) requireText(testIndex, `href="${link}"`, 'teste/index.html');
+const gamesTrail = read('teste/jogos-digitais-trilha.html');
+for (const marker of ['const modules=', 'Planejamento e game design', 'GDevelop: cenas, objetos e instâncias', 'Testes, áudio, salvamento e publicação']) requireText(gamesTrail, marker, 'teste/jogos-digitais-trilha.html');
+const gamesSimulation = read('teste/jogos-digitais-simulado.html');
+for (const marker of ['const questions=', 'Simulado com explicações', 'jogos-digitais.html']) requireText(gamesSimulation, marker, 'teste/jogos-digitais-simulado.html');
+const gamesExamTest = read('teste/jogos-digitais.html');
+for (const marker of ['Prepare-se antes da prova', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(gamesExamTest, marker, 'teste/jogos-digitais.html');
+
 console.log('Homologação aprovada: 7 disciplinas, imagens, links e painel verificados.');
 
