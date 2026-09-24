@@ -48,6 +48,18 @@ for (const marker of [
   'manutencao-maquinas-card.jpg',
 ]) requireText(index, marker, 'index.html');
 
+for (const file of ['jogos-digitais-trilha.html', 'jogos-digitais-simulado.html']) requireFile(file);
+for (const link of ['jogos-digitais-trilha.html', 'jogos-digitais-simulado.html', 'jogos-digitais.html']) requireText(index, `href="${link}"`, 'index.html');
+const gamesTrailProduction = read('jogos-digitais-trilha.html');
+for (const marker of ['Missão: Construa seu Primeiro Jogo', 'Chefão final: Bug Supremo', 'portal-jogos-trilha-v2']) requireText(gamesTrailProduction, marker, 'jogos-digitais-trilha.html');
+const gamesSimulationProduction = read('jogos-digitais-simulado.html');
+for (const marker of ['Arena dos Desafios', 'Poder: eliminar opção', 'portal-jogos-simulado-v2']) requireText(gamesSimulationProduction, marker, 'jogos-digitais-simulado.html');
+const gamesExamProduction = read('jogos-digitais.html');
+for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa dos 40 desafios', "const API='https://provabd.hebersonmiliano.chatgpt.site'"]) requireText(gamesExamProduction, marker, 'jogos-digitais.html');
+for (const [content,file] of [[gamesTrailProduction,'jogos-digitais-trilha.html'],[gamesSimulationProduction,'jogos-digitais-simulado.html'],[gamesExamProduction,'jogos-digitais.html']]) {
+  if (content.includes('AMBIENTE DE TESTE') || content.includes('homologacao.hebersonmiliano')) throw new Error(`Conteúdo de homologação encontrado em produção: ${file}`);
+}
+
 const maintenance = read('manutencao-maquinas.html');
 requireText(maintenance, 'manutencao-maquinas-card.jpg', 'manutencao-maquinas.html');
 requireText(maintenance, 'max-width:none', 'manutencao-maquinas.html');
