@@ -64,7 +64,7 @@ for (const marker of ['const modules=', 'Planejamento e game design', 'GDevelop:
 const gamesSimulation = read('teste/jogos-digitais-simulado.html');
 for (const marker of ['const questions=', 'Arena dos Desafios', 'Floresta do Design', 'Poder: eliminar opção', 'jogos-digitais.html']) requireText(gamesSimulation, marker, 'teste/jogos-digitais-simulado.html');
 const gamesExamTest = read('teste/jogos-digitais.html');
-for (const marker of ['Prepare-se antes da prova', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(gamesExamTest, marker, 'teste/jogos-digitais.html');
+for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa dos 40 desafios', 'Reino do Game Design', 'RANK ${rank}', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(gamesExamTest, marker, 'teste/jogos-digitais.html');
 
 console.log('Homologação aprovada: 7 disciplinas, imagens, links e painel verificados.');
 
