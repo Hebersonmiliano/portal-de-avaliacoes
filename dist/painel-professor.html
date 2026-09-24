@@ -23,7 +23,8 @@ const DISCIPLINES=[
  {id:'projeto-de-vida',name:'Projeto de Vida',desc:'Planejamento, escolhas e carreira.',color:'#b45309'},
  {id:'mundo-trabalho-4',name:'Mundo do Trabalho 4.0',desc:'Indústria 4.0 e competências profissionais.',color:'#0f766e'},
  {id:'fundamentos-redes',name:'Fundamentos de Redes de Computadores',desc:'IP, dispositivos, protocolos e segurança.',color:'#0369a1'},
- {id:'manutencao-maquinas',name:'Técnico em Manutenção de Máquinas Industriais',desc:'Desenho técnico, mecânica, automação e manutenção industrial.',color:'#c2410c'}
+ {id:'manutencao-maquinas',name:'Técnico em Manutenção de Máquinas Industriais',desc:'Desenho técnico, mecânica, automação e manutenção industrial.',color:'#c2410c'},
+ {id:'logica-python',name:'Lógica de Programação e Python',desc:'Da lógica ao Python avançado.',color:'#6d28d9'}
 ];
 let token='',role='',classes=[],states={},activeDiscipline='';const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(path,options={}){const response=await fetch(API+path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:'Bearer '+token}:{}),...(options.headers||{})},cache:'no-store'});let data={};try{data=await response.json()}catch{}if(!response.ok)throw Error(data.error||'Falha de comunicação.');return data}

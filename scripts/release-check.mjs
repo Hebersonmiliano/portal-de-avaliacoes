@@ -18,10 +18,11 @@ const disciplines = [
   ['Mundo do Trabalho 4.0', 'mundo-trabalho-4.html'],
   ['Fundamentos de Redes de Computadores', 'fundamentos-redes.html'],
   ['Técnico em Manutenção de Máquinas Industriais', 'manutencao-maquinas.html'],
+  ['Lógica de Programação e Python', 'logica-python.html'],
 ];
 
 const index = read('index.html');
-requireText(index, '7 DISCIPLINAS', 'index.html');
+requireText(index, '8 DISCIPLINAS', 'index.html');
 if (index.includes('6 DISCIPLINAS')) throw new Error('O portal voltou a informar apenas 6 disciplinas.');
 for (const [name, file] of disciplines) {
   requireText(index, name, 'index.html');
@@ -65,7 +66,7 @@ requireText(maintenance, 'manutencao-maquinas-card.jpg', 'manutencao-maquinas.ht
 requireText(maintenance, 'max-width:none', 'manutencao-maquinas.html');
 
 const panel = read('painel-professor.html');
-for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
+for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas','logica-python']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
 for (const marker of ['Gerenciar professores','createTeacher','loadTeachers','setTeacherStatus']) requireText(panel, marker, 'painel-professor.html');
 
 for (const file of ['teste/jogos-digitais-trilha.html', 'teste/jogos-digitais-simulado.html', 'teste/jogos-digitais.html']) requireFile(file);
@@ -91,7 +92,14 @@ const pythonExam = read('teste/logica-python.html');
 for (const marker of ['Desafio Final: Torre Python', "DISC='logica-python'", 'Mapa dos 40 desafios', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(pythonExam, marker, 'teste/logica-python.html');
 const testPanel = read('teste/painel-professor.html');
 requireText(testPanel, "id:'logica-python'", 'teste/painel-professor.html');
-if (index.includes('logica-python')) throw new Error('Lógica e Python foi incluída na produção antes da aprovação da homologação.');
+for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
+  requireFile(file);
+  requireText(index, `href="${file}"`, 'index.html');
+  const content = read(file);
+  if (content.includes('AMBIENTE DE TESTE') || content.includes('portal-avaliacoes-homologacao') || content.includes('portal-teste-python-') || content.includes('noindex,nofollow')) throw new Error(`Marcador de homologação em produção: ${file}`);
+}
+requireText(read('logica-python-trilha.html'), 'Conheça Python', 'logica-python-trilha.html');
+requireText(read('logica-python.html'), "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'logica-python.html');
 
-console.log('Homologação aprovada: produção preservada e Lógica/Python completa no ambiente de teste.');
+console.log('Publicação aprovada: Lógica/Python disponível em produção e homologação preservada.');
 
