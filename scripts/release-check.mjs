@@ -78,6 +78,11 @@ const gamesSimulation = read('teste/jogos-digitais-simulado.html');
 for (const marker of ['const questions=', 'Arena dos Desafios', 'Floresta do Design', 'Poder: eliminar opção', 'jogos-digitais.html']) requireText(gamesSimulation, marker, 'teste/jogos-digitais-simulado.html');
 const gamesExamTest = read('teste/jogos-digitais.html');
 for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa dos 40 desafios', 'Reino do Game Design', 'RANK ${rank}', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(gamesExamTest, marker, 'teste/jogos-digitais.html');
+for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-simulado.html','jogos-digitais-piloto-dados.js','jogos-digitais-piloto.css']) requireFile(`teste/${file}`);
+requireText(testIndex, 'href="jogos-digitais-piloto-trilha.html"', 'teste/index.html');
+requireText(read('teste/jogos-digitais-piloto-trilha.html'), '8 assuntos, uma sequência clara', 'teste/jogos-digitais-piloto-trilha.html');
+requireText(read('teste/jogos-digitais-piloto-simulado.html'), 'Oito situações novas', 'teste/jogos-digitais-piloto-simulado.html');
+if (index.includes('jogos-digitais-piloto')) throw new Error('O piloto de Jogos Digitais não deve aparecer em produção.');
 
 requireText(testIndex, '8 DISCIPLINAS', 'teste/index.html');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Simulado piloto de Jogos Digitais — Ambiente de teste</title>
+<link rel="stylesheet" href="jogos-digitais-piloto.css">
+</head>
+<body>
+<div class="test">AMBIENTE DE TESTE — simulado piloto, sem nota oficial</div>
+<header class="hero"><div class="wrap"><nav><a href="./">← Portal de teste</a><a href="jogos-digitais-piloto-trilha.html">Voltar à trilha piloto</a></nav><div class="eyebrow">Programação de Jogos Digitais · Capítulo piloto</div><h1>Arena dos conceitos</h1><p>Oito situações novas para praticar os assuntos estudados. A cada resposta, você recebe uma explicação e pode voltar ao trecho da trilha.</p><div class="steps"><span>1 Aprender</span><span class="active">2 Praticar no simulado</span><span>3 Prova oficial, sem mudanças</span></div></div></header>
+<main class="wrap"><section class="card intro"><div><h2>Treino com explicações</h2><p>As perguntas deste simulado não são cópias da prova. O objetivo é aplicar os mesmos conceitos em contextos diferentes.</p><div class="progress"><i id="bar"></i></div><div class="fine" id="progressText"></div></div><span class="badge">PILOTO · 8 DESAFIOS</span></section>
+<section class="card lesson" id="quiz" aria-live="polite"></section>
+<section class="card finish" id="finish" aria-live="polite"></section>
+<p class="fine">A pontuação deste treino fica somente nesta página e não entra no painel do professor.</p></main>
+<script type="module">
+import {topics} from './jogos-digitais-piloto-dados.js';
+let current=0;
+let answers=Array(topics.length).fill(null);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){
+  $('bar').style.width=(answers.filter(a=>a!==null).length/topics.length*100)+'%';
+  $('progressText').textContent=`${answers.filter(a=>a!==null).length} de ${topics.length} desafios respondidos`;
+  if(current===topics.length){
+    $('quiz').hidden=true;$('finish').classList.add('show');
+    const score=answers.filter((a,i)=>a===topics[i].sim.c).length;
+    $('finish').innerHTML=`<h2>🏁 Treino concluído: ${score}/${topics.length}</h2><p>Veja quais conceitos revisar antes da prova. O resultado não altera sua nota oficial.</p><div class="review">${topics.map((t,i)=>`<a href="jogos-digitais-piloto-trilha.html?tema=${i+1}">${answers[i]===t.sim.c?'✓':'↻'} ${esc(t.title)}</a>`).join('')}</div><div class="actions"><button class="btn" data-restart>Refazer simulado</button><a class="btn secondary" href="jogos-digitais-piloto-trilha.html">Revisar toda a trilha</a></div>`;
+    return;
+  }
+  const t=topics[current],answered=answers[current]!==null,correct=answers[current]===t.sim.c;
+  $('quiz').hidden=false;$('finish').classList.remove('show');
+  $('quiz').innerHTML=`<div class="quiz-top"><span class="number">Desafio ${current+1} de ${topics.length}</span><span class="badge">${t.icon} ${esc(t.title)}</span></div><h2>${esc(t.sim.q)}</h2>${t.sim.o.map((o,i)=>`<button class="option ${answered&&i===t.sim.c?'right':''} ${answered&&i===answers[current]&&!correct?'wrong':''}" data-answer="${i}" ${answered?'disabled':''}>${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join('')}${answered?`<div class="feedback ${correct?'good':'bad'}" role="status">${correct?'✓ Correto.':'Vamos revisar.'} ${esc(t.sim.why)}</div><div class="actions"><button class="btn" data-next>${current===topics.length-1?'Ver resultado →':'Próximo desafio →'}</button><a class="btn secondary" href="jogos-digitais-piloto-trilha.html?tema=${current+1}">Rever este assunto</a></div>`:''}`;
+}
+document.addEventListener('click',e=>{
+  const option=e.target.closest('[data-answer]');if(option&&current<topics.length&&answers[current]===null){answers[current]=Number(option.dataset.answer);render();return}
+  if(e.target.closest('[data-next]')){current++;render();(current===topics.length?$('finish'):$('quiz')).scrollIntoView({block:'start'});return}
+  if(e.target.closest('[data-restart]')){current=0;answers=Array(topics.length).fill(null);render();window.scrollTo({top:0,behavior:'smooth'})}
+});
+render();
+</script>
+</body>
+</html>

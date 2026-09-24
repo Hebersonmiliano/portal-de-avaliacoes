@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Piloto da trilha de Jogos Digitais — Ambiente de teste</title>
+<link rel="stylesheet" href="jogos-digitais-piloto.css">
+</head>
+<body>
+<div class="test">AMBIENTE DE TESTE — piloto didático, sem nota oficial</div>
+<header class="hero"><div class="wrap"><nav><a href="./">← Portal de teste</a><a href="jogos-digitais-trilha.html">Trilha atual</a></nav><div class="eyebrow">Programação de Jogos Digitais · Capítulo piloto</div><h1>Do conceito ao desafio</h1><p>Aprenda cada assunto com uma explicação simples, veja um exemplo e resolva uma atividade antes de chegar ao simulado.</p><div class="steps"><span class="active">1 Aprender</span><span>2 Praticar no simulado</span><span>3 Prova oficial, sem mudanças</span></div></div></header>
+<main class="wrap"><section class="card intro"><div><h2>8 assuntos, uma sequência clara</h2><p>Este piloto mostra como a trilha pode abordar os temas avaliados. As atividades usam situações próprias; não reproduzem as perguntas da prova. Depois de testar o formato, podemos ampliar a cobertura para todos os 40 assuntos.</p><div class="progress"><i id="bar"></i></div><div class="fine" id="progressText"></div></div><span class="badge">PILOTO · 8 TEMAS</span></section>
+<div class="layout"><aside class="card menu"><h2>Mapa de aprendizagem</h2><div id="topicMenu"></div><p class="fine">Conclua uma atividade para liberar a próxima. Seu progresso fica neste navegador.</p></aside><section class="card lesson" id="lesson" aria-live="polite"></section></div>
+<section class="card finish" id="finish"><h2>🎉 Capítulo concluído!</h2><p>Agora pratique os mesmos conhecimentos em situações novas. O simulado explica cada resposta e indica o assunto para revisar.</p><a class="btn" href="jogos-digitais-piloto-simulado.html">Ir para o simulado piloto →</a></section>
+<p class="fine">Este piloto não altera a trilha, o simulado nem a prova em produção.</p></main>
+<script type="module">
+import {topics} from './jogos-digitais-piloto-dados.js';
+const key='portal-teste-jogos-piloto-trilha-v1';
+let saved=[];try{saved=JSON.parse(localStorage.getItem(key))}catch{};
+let done=Array.isArray(saved)?saved.filter(n=>Number.isInteger(n)&&n>=0&&n<topics.length):[];
+done=[...new Set(done)].sort((a,b)=>a-b);
+let current=done.length===topics.length?0:done.length;
+const requested=Number(new URLSearchParams(location.search).get('tema'))-1;
+if(Number.isInteger(requested)&&requested>=0&&requested<=done.length&&requested<topics.length)current=requested;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){
+  $('bar').style.width=(done.length/topics.length*100)+'%';
+  $('progressText').textContent=`${done.length} de ${topics.length} assuntos concluídos`;
+  $('topicMenu').innerHTML=topics.map((t,i)=>`<button class="topic ${i===current?'active':''} ${done.includes(i)?'done':''}" data-topic="${i}" ${i>done.length?'disabled':''}><span>${t.icon}</span><strong>${i+1}. ${esc(t.title)} ${done.includes(i)?'✓':''}</strong></button>`).join('');
+  const t=topics[current],completed=done.includes(current);
+  $('lesson').innerHTML=`<div class="number">Assunto ${current+1} de ${topics.length}</div><h2>${t.icon} ${esc(t.title)}</h2><h3>📖 Entenda</h3><p>${esc(t.learn)}</p><div class="example"><strong>💡 Exemplo no jogo</strong><p>${esc(t.example)}</p></div><div class="question"><h3>⚔️ Confira o que aprendeu</h3><p>${esc(t.check.q)}</p>${t.check.o.map((o,i)=>`<button class="option ${completed&&i===t.check.c?'right':''}" data-answer="${i}" ${completed?'disabled':''}>${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join('')}<div id="feedback" role="status">${completed?`<div class="feedback good">✓ ${esc(t.check.why)}</div>`:''}</div></div><div class="actions"><button class="btn secondary" data-prev ${current===0?'disabled':''}>← Assunto anterior</button><button class="btn" data-next ${current>=done.length||current===topics.length-1?'disabled':''}>Próximo assunto →</button></div>`;
+  $('finish').classList.toggle('show',done.length===topics.length);
+}
+document.addEventListener('click',e=>{
+  const topic=e.target.closest('[data-topic]');if(topic){current=Number(topic.dataset.topic);render();$('lesson').scrollIntoView({block:'start'});return}
+  if(e.target.closest('[data-prev]')){current--;render();$('lesson').scrollIntoView({block:'start'});return}
+  if(e.target.closest('[data-next]')){current++;render();$('lesson').scrollIntoView({block:'start'});return}
+  const option=e.target.closest('[data-answer]');if(!option||done.includes(current))return;
+  const t=topics[current],answer=Number(option.dataset.answer),feedback=$('feedback');
+  if(answer!==t.check.c){option.classList.add('wrong');feedback.innerHTML=`<div class="feedback bad">Ainda não. ${esc(t.check.why)} Leia o exemplo e tente novamente.</div>`;return}
+  done.push(current);done.sort((a,b)=>a-b);localStorage.setItem(key,JSON.stringify(done));render();
+});
+render();
+</script>
+</body>
+</html>
