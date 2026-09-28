@@ -19,10 +19,11 @@ const disciplines = [
   ['Fundamentos de Redes de Computadores', 'fundamentos-redes.html'],
   ['Técnico em Manutenção de Máquinas Industriais', 'manutencao-maquinas.html'],
   ['Lógica de Programação e Python', 'logica-python.html'],
+  ['Metodologias Ágeis', 'metodologias-ageis.html'],
 ];
 
 const index = read('index.html');
-requireText(index, '8 DISCIPLINAS', 'index.html');
+requireText(index, '9 DISCIPLINAS', 'index.html');
 if (index.includes('6 DISCIPLINAS')) throw new Error('O portal voltou a informar apenas 6 disciplinas.');
 for (const [name, file] of disciplines) {
   requireText(index, name, 'index.html');
@@ -38,6 +39,7 @@ for (const image of [
   'mundo-trabalho-4.jpg',
   'fundamentos-redes.jpg',
   'manutencao-maquinas-card.jpg',
+  'metodologias-ageis-hero.webp',
 ]) requireFile(image);
 
 for (const marker of [
@@ -66,7 +68,7 @@ requireText(maintenance, 'manutencao-maquinas-card.jpg', 'manutencao-maquinas.ht
 requireText(maintenance, 'max-width:none', 'manutencao-maquinas.html');
 
 const panel = read('painel-professor.html');
-for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas','logica-python']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
+for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas','logica-python','metodologias-ageis']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
 for (const marker of ['Gerenciar professores','createTeacher','loadTeachers','setTeacherStatus']) requireText(panel, marker, 'painel-professor.html');
 
 for (const file of ['teste/jogos-digitais-trilha.html', 'teste/jogos-digitais-simulado.html', 'teste/jogos-digitais.html']) requireFile(file);
@@ -82,7 +84,14 @@ for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-s
 requireText(testIndex, 'href="jogos-digitais-piloto-trilha.html"', 'teste/index.html');
 requireText(read('teste/jogos-digitais-piloto-trilha.html'), '8 assuntos, uma sequência clara', 'teste/jogos-digitais-piloto-trilha.html');
 requireText(read('teste/jogos-digitais-piloto-simulado.html'), 'Oito situações novas', 'teste/jogos-digitais-piloto-simulado.html');
-if (index.includes('jogos-digitais-piloto')) throw new Error('O piloto de Jogos Digitais não deve aparecer em produção.');
+for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-simulado.html','jogos-digitais-piloto-dados.js','jogos-digitais-piloto.css']) requireFile(file);
+requireText(index, 'href="jogos-digitais-piloto-trilha.html"', 'index.html');
+requireText(read('jogos-digitais-piloto-trilha.html'), '8 assuntos, uma sequência clara', 'jogos-digitais-piloto-trilha.html');
+requireText(read('jogos-digitais-piloto-simulado.html'), 'Oito situações novas', 'jogos-digitais-piloto-simulado.html');
+for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-simulado.html']) {
+  const content = read(file);
+  if (content.includes('AMBIENTE DE TESTE') || content.includes('noindex,nofollow') || content.includes('portal-teste-')) throw new Error(`Marcador de homologação em produção: ${file}`);
+}
 
 requireText(testIndex, '9 DISCIPLINAS', 'teste/index.html');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
@@ -102,7 +111,16 @@ for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulad
 for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
 requireText(read('teste/metodologias-ageis.html'), "DISC='metodologias-ageis'", 'teste/metodologias-ageis.html');
 requireText(read('teste/metodologias-ageis.html'), 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', 'teste/metodologias-ageis.html');
-if (index.includes('metodologias-ageis') || panel.includes("id:'metodologias-ageis'")) throw new Error('Metodologias Ágeis ainda deve ficar somente no ambiente de teste.');
+for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html','metodologias-ageis-dados.js','metodologias-ageis-jornada.js','metodologias-ageis.css','metodologias-ageis-hero.webp']) requireFile(file);
+for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html']) requireText(index, `href="${file}"`, 'index.html');
+const agileExamProduction = read('metodologias-ageis.html');
+requireText(agileExamProduction, "DISC='metodologias-ageis'", 'metodologias-ageis.html');
+requireText(agileExamProduction, "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'metodologias-ageis.html');
+requireText(read('metodologias-ageis.css'), 'overflow-wrap:anywhere', 'metodologias-ageis.css');
+for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html','metodologias-ageis-jornada.js']) {
+  const content = read(file);
+  if (content.includes('AMBIENTE DE TESTE') || content.includes('portal-avaliacoes-homologacao') || content.includes('portal-teste-ageis-') || content.includes('noindex,nofollow')) throw new Error(`Marcador de homologação em produção: ${file}`);
+}
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
   requireFile(file);
   requireText(index, `href="${file}"`, 'index.html');
@@ -112,5 +130,5 @@ for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 
 requireText(read('logica-python-trilha.html'), 'Conheça Python', 'logica-python-trilha.html');
 requireText(read('logica-python.html'), "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'logica-python.html');
 
-console.log('Publicação aprovada: Lógica/Python disponível em produção e homologação preservada.');
+console.log('Publicação aprovada: 9 disciplinas, Metodologias Ágeis e piloto de Jogos prontos para produção.');
 
