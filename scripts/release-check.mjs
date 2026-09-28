@@ -84,7 +84,7 @@ requireText(read('teste/jogos-digitais-piloto-trilha.html'), '8 assuntos, uma se
 requireText(read('teste/jogos-digitais-piloto-simulado.html'), 'Oito situações novas', 'teste/jogos-digitais-piloto-simulado.html');
 if (index.includes('jogos-digitais-piloto')) throw new Error('O piloto de Jogos Digitais não deve aparecer em produção.');
 
-requireText(testIndex, '8 DISCIPLINAS', 'teste/index.html');
+requireText(testIndex, '9 DISCIPLINAS', 'teste/index.html');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
   requireFile(`teste/${file}`);
   requireText(testIndex, `href="${file}"`, 'teste/index.html');
@@ -97,6 +97,12 @@ const pythonExam = read('teste/logica-python.html');
 for (const marker of ['Desafio Final: Torre Python', "DISC='logica-python'", 'Mapa dos 40 desafios', 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site']) requireText(pythonExam, marker, 'teste/logica-python.html');
 const testPanel = read('teste/painel-professor.html');
 requireText(testPanel, "id:'logica-python'", 'teste/painel-professor.html');
+requireText(testPanel, "id:'metodologias-ageis'", 'teste/painel-professor.html');
+for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html','metodologias-ageis-dados.js','metodologias-ageis-jornada.js','metodologias-ageis.css','metodologias-ageis-hero.webp']) requireFile(`teste/${file}`);
+for (const file of ['metodologias-ageis-trilha.html','metodologias-ageis-simulado.html','metodologias-ageis.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
+requireText(read('teste/metodologias-ageis.html'), "DISC='metodologias-ageis'", 'teste/metodologias-ageis.html');
+requireText(read('teste/metodologias-ageis.html'), 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', 'teste/metodologias-ageis.html');
+if (index.includes('metodologias-ageis') || panel.includes("id:'metodologias-ageis'")) throw new Error('Metodologias Ágeis ainda deve ficar somente no ambiente de teste.');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
   requireFile(file);
   requireText(index, `href="${file}"`, 'index.html');
