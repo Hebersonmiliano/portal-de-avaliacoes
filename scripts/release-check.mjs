@@ -23,12 +23,19 @@ const disciplines = [
 ];
 
 const index = read('index.html');
-requireText(index, '9 DISCIPLINAS', 'index.html');
+requireText(index, '11 DISCIPLINAS', 'index.html');
 if (index.includes('6 DISCIPLINAS')) throw new Error('O portal voltou a informar apenas 6 disciplinas.');
 for (const [name, file] of disciplines) {
   requireText(index, name, 'index.html');
   requireText(index, `href="${file}"`, 'index.html');
   requireFile(file);
+}
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(file);
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html']) requireText(index, `href="${file}"`, 'index.html');
+requireText(index, 'Fundamentos da Instrumentação', 'index.html');
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-jornada.js']) {
+  const content=read(file);
+  if (content.includes('AMBIENTE DE TESTE') || content.includes('portal-teste-instrumentacao') || content.includes('noindex,nofollow')) throw new Error(`Marcador de teste em produção: ${file}`);
 }
 
 for (const image of [
@@ -134,6 +141,6 @@ for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 
 requireText(read('logica-python-trilha.html'), 'Conheça Python', 'logica-python-trilha.html');
 requireText(read('logica-python.html'), "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'logica-python.html');
 
-console.log('Publicação aprovada: 9 disciplinas, Metodologias Ágeis e piloto de Jogos prontos para produção.');
+console.log('Publicação aprovada: 11 disciplinas e recursos anteriores preservados.');
 
 

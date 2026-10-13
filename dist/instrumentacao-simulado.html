@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fundamentos da Instrumentação · Simulado</title><link rel="stylesheet" href="instrumentacao.css"></head>
+<body data-mode="simulation">
+
+<div class="topbar"><nav class="wrap"><a href="./">← Portal de Avaliações</a><div class="links"><a href="instrumentacao-trilha.html">Trilha</a><a href="instrumentacao-simulado.html" aria-current="page">Simulado</a></div></nav></div>
+<header class="hero"><div class="wrap"><div class="eyebrow">Fundamentos da Instrumentação · Arena de diagnóstico</div><h1>40 situações para resolver</h1><p>Escolha uma decisão em cada situação de trabalho. Receba explicação imediata e revise a estação relacionada quando precisar.</p><div class="steps"><a href="instrumentacao-trilha.html">1. Trilha</a><span class="current">2. Simulado</span><span>3. Prova em preparação</span></div></div></header>
+<main class="wrap"><div id="storageWarning" class="save-warning" hidden></div>
+<section class="card" id="playerPanel"></section>
+<section class="card" id="characterPicker" hidden><h2>Escolha seu personagem</h2><div id="characters" class="character-grid"></div></section>
+<section class="card" id="simulationIntro"><h2>Prepare seu diagnóstico</h2><p>São 40 questões originais, com cinco alternativas, sobre os assuntos das oito estações. O simulado serve para estudar; não envia nota ao painel do professor.</p><p class="muted">Você pode sair e retomar no mesmo navegador quando o armazenamento estiver disponível.</p><div class="actions"><button class="btn" id="beginSimulation" data-start>Começar simulado</button><a class="btn secondary" href="instrumentacao-trilha.html">Revisar a trilha</a></div></section>
+<section class="card" id="simulationMap" hidden><div class="head-row"><h2>Mapa do simulado</h2><span class="pill" id="simulationCount"></span></div><div class="progress"><i id="simulationBar"></i></div><div class="question-map" id="questionMap" aria-label="Navegar entre as situações"></div></section>
+<section class="card" id="quiz" hidden aria-live="polite"></section>
+<section class="card" id="simulationResult" hidden aria-live="polite"></section>
+<p class="small storage-note">Questões inéditas no estilo de situações-problema. Não são itens oficiais do SAEP e não substituem a prova oficial.</p>
+</main><script type="module" src="instrumentacao-jornada.js"></script>
+</body></html>
+
