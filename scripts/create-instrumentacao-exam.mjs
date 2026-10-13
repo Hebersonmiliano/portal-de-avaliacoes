@@ -19,6 +19,7 @@ for (const area of ['dist', 'dist/teste']) {
     ['Oficina da Equipe', 'Laboratório de Calibração'],
     ['Fortaleza Ágil', 'Central de Controle'],
     ['🎮', '👩🏽‍🔬'],
+    ['👩🏽‍🚀', '👩🏽‍🔬'],
   ];
   page = page.replace('url("metodologias-ageis-hero.webp") center/cover', 'radial-gradient(circle at 82% 30%,#21b8ca88,transparent 32%),linear-gradient(110deg,#071a33,#0b5d73)');
   for (const [before, after] of changes) page = page.replaceAll(before, after);
