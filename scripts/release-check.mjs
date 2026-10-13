@@ -93,7 +93,11 @@ for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-s
   if (content.includes('AMBIENTE DE TESTE') || content.includes('noindex,nofollow') || content.includes('portal-teste-')) throw new Error(`Marcador de homologação em produção: ${file}`);
 }
 
-requireText(testIndex, '9 DISCIPLINAS', 'teste/index.html');
+requireText(testIndex, '11 DISCIPLINAS', 'teste/index.html');
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
+requireText(testIndex, 'Fundamentos da Instrumentação', 'teste/index.html');
+requireText(read('teste/instrumentacao-simulado.html'), 'sem nota oficial', 'teste/instrumentacao-simulado.html');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
   requireFile(`teste/${file}`);
   requireText(testIndex, `href="${file}"`, 'teste/index.html');
@@ -131,4 +135,5 @@ requireText(read('logica-python-trilha.html'), 'Conheça Python', 'logica-python
 requireText(read('logica-python.html'), "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'logica-python.html');
 
 console.log('Publicação aprovada: 9 disciplinas, Metodologias Ágeis e piloto de Jogos prontos para produção.');
+
 
