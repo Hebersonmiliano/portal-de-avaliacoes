@@ -30,13 +30,17 @@ for (const [name, file] of disciplines) {
   requireText(index, `href="${file}"`, 'index.html');
   requireFile(file);
 }
-for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(file);
-for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html']) requireText(index, `href="${file}"`, 'index.html');
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(file);
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(index, `href="${file}"`, 'index.html');
 requireText(index, 'Fundamentos da Instrumentação', 'index.html');
-for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-jornada.js']) {
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-jornada.js']) {
   const content=read(file);
   if (content.includes('AMBIENTE DE TESTE') || content.includes('portal-teste-instrumentacao') || content.includes('noindex,nofollow')) throw new Error(`Marcador de teste em produção: ${file}`);
 }
+const instrumentationExam = read('instrumentacao.html');
+for (const marker of ["DISC='instrumentacao'", "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'checkExamReady()', 'Mapa dos 40 desafios']) requireText(instrumentationExam, marker, 'instrumentacao.html');
+if (instrumentationExam.includes('instrumentacao-dados.js') || instrumentationExam.includes('correct:')) throw new Error('A prova não pode expor o gabarito público do simulado.');
+requireText(fs.readFileSync('server/api.mjs','utf8'), "'instrumentacao'", 'server/api.mjs');
 
 for (const image of [
   'banco-dados-imagem.png',
@@ -75,7 +79,7 @@ requireText(maintenance, 'manutencao-maquinas-card.jpg', 'manutencao-maquinas.ht
 requireText(maintenance, 'max-width:none', 'manutencao-maquinas.html');
 
 const panel = read('painel-professor.html');
-for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas','logica-python','metodologias-ageis']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
+for (const id of ['banco-dados','jogos-digitais','desenvolvimento-web','projeto-de-vida','mundo-trabalho-4','fundamentos-redes','manutencao-maquinas','logica-python','metodologias-ageis','instrumentacao']) requireText(panel, `id:'${id}'`, 'painel-professor.html');
 for (const marker of ['Gerenciar professores','createTeacher','loadTeachers','setTeacherStatus']) requireText(panel, marker, 'painel-professor.html');
 
 for (const file of ['teste/jogos-digitais-trilha.html', 'teste/jogos-digitais-simulado.html', 'teste/jogos-digitais.html']) requireFile(file);
@@ -101,9 +105,10 @@ for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-s
 }
 
 requireText(testIndex, '11 DISCIPLINAS', 'teste/index.html');
-for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
-for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
+for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
 requireText(testIndex, 'Fundamentos da Instrumentação', 'teste/index.html');
+requireText(read('teste/instrumentacao.html'), 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', 'teste/instrumentacao.html');
 requireText(read('teste/instrumentacao-simulado.html'), 'sem nota oficial', 'teste/instrumentacao-simulado.html');
 for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 'logica-python.html']) {
   requireFile(`teste/${file}`);

@@ -13,6 +13,29 @@ export async function setup(){
  const token=(await call('login',{password:'senha-local-de-teste'})).data.token;
  return {DB,env,call,token};
 }
+test('Instrumentação só abre com 40 questões privadas e registra a nota no painel',async()=>{
+ const {call,token}=await setup(),discipline='instrumentacao';
+ assert.deepEqual((await call('health?discipline=instrumentacao')).data,{ok:true,discipline,ready:false,count:0});
+ const turma=classes[0];
+ const code=await call('teacher/generate-code',{discipline,turma},token);
+ assert.equal(code.status,200);
+ const student={discipline,name:'Aluna de Instrumentação',turma,codigo:code.data.codigo,nonce:randomToken()};
+ assert.equal((await call('start',student)).status,503);
+ assert.equal((await call('teacher/bank',{discipline,questions:bank})).status,401);
+ assert.equal((await call('teacher/bank',{discipline,questions:bank},token)).status,200);
+ assert.equal((await call('health?discipline=instrumentacao')).data.ready,true);
+ const started=await call('start',student);
+ assert.equal(started.status,200);
+ assert.equal(started.data.questions.length,40);
+ assert.ok(started.data.questions.every(q=>!('correct' in q)));
+ const answers=started.data.questions.map(q=>q.options.indexOf('Resposta de teste'));
+ const submitted=await call('submit',{...student,id:started.data.id,token:started.data.token,answers,saidas:0,forced:false});
+ assert.equal(submitted.status,200);
+ assert.equal(submitted.data.score,10);
+ const results=await call('teacher/results?discipline=instrumentacao',undefined,token);
+ assert.equal(results.data.records.length,1);
+ assert.equal(results.data.records[0].name,student.name);
+});
 test('códigos privados, reserva, identidade, correção e reenvio idempotente',async()=>{
  const {DB,call,token}=await setup();
  assert.equal((await call('teacher/results')).status,401);
