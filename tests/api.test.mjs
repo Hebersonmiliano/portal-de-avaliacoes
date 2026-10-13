@@ -15,7 +15,7 @@ export async function setup(){
 }
 test('Instrumentação só abre com 40 questões privadas e registra a nota no painel',async()=>{
  const {call,token}=await setup(),discipline='instrumentacao';
- assert.deepEqual((await call('health?discipline=instrumentacao')).data,{ok:true,discipline,ready:false,count:0});
+ assert.deepEqual((await call('health?discipline=instrumentacao')).data,{ok:true,discipline,ready:false,count:0,expected:40});
  const turma=classes[0];
  const code=await call('teacher/generate-code',{discipline,turma},token);
  assert.equal(code.status,200);
