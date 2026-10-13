@@ -32,6 +32,7 @@ for (const [name, file] of disciplines) {
 }
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(file);
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(index, `href="${file}"`, 'index.html');
+if ((index.match(/href="instrumentacao\.html"/g) || []).length !== 1) throw new Error('O card de Instrumentação deve ter somente um botão de prova.');
 requireText(index, 'Fundamentos da Instrumentação', 'index.html');
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-jornada.js']) {
   const content=read(file);
@@ -107,6 +108,7 @@ for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-s
 requireText(testIndex, '11 DISCIPLINAS', 'teste/index.html');
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
+if ((testIndex.match(/href="instrumentacao\.html"/g) || []).length !== 1) throw new Error('O card de teste de Instrumentação deve ter somente um botão de prova.');
 requireText(testIndex, 'Fundamentos da Instrumentação', 'teste/index.html');
 requireText(read('teste/instrumentacao.html'), 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', 'teste/instrumentacao.html');
 requireText(read('teste/instrumentacao-simulado.html'), 'sem nota oficial', 'teste/instrumentacao-simulado.html');
