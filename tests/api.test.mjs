@@ -4,6 +4,7 @@ import {api} from '../server/api.mjs';
 import {classes,randomToken,passwordVerifier,sha} from '../server/security.mjs';
 import {database} from './database.mjs';
 const bank=Array.from({length:40},(_,i)=>({text:'Questão fictícia exclusiva de teste '+i,options:['Resposta de teste','B','C','D','E'],correct:0}));
+const maintenanceBank=Array.from({length:30},(_,i)=>({sourceId:'SAEP_'+i,text:'Questão de manutenção industrial exclusiva de teste '+i,options:i===26?['A','B','Resposta de teste','D']:['A','B','Resposta de teste','D','E'],correct:2,...(i===0?{image:'manutencao-images/figura.png'}:{})}));
 export async function setup(){
  const DB=database(),salt=randomToken(),env={DB,TEACHER_PASSWORD_SALT:salt,TEACHER_PASSWORD_VERIFIER:await passwordVerifier('senha-local-de-teste',salt),ATTEMPT_SECRET:randomToken()};
  const call=async(path,body,token,ip='192.0.2.1')=>{
@@ -13,22 +14,23 @@ export async function setup(){
  const token=(await call('login',{password:'senha-local-de-teste'})).data.token;
  return {DB,env,call,token};
 }
-test('Instrumentação só abre com 40 questões privadas e registra a nota no painel',async()=>{
- const {call,token}=await setup(),discipline='instrumentacao';
- assert.deepEqual((await call('health?discipline=instrumentacao')).data,{ok:true,discipline,ready:false,count:0,expected:40});
- const turma=classes[0];
+test('Instrumentação exige banco privado e registra resultado',async()=>{
+ const {call,token}=await setup(),discipline='instrumentacao',turma=classes[0];
+ const health=await call('health?discipline=instrumentacao');
+ assert.equal(health.status,200);
+ assert.equal(health.data.ready,false);
+ assert.equal(health.data.expected,40);
  const code=await call('teacher/generate-code',{discipline,turma},token);
  assert.equal(code.status,200);
  const student={discipline,name:'Aluna de Instrumentação',turma,codigo:code.data.codigo,nonce:randomToken()};
  assert.equal((await call('start',student)).status,503);
  assert.equal((await call('teacher/bank',{discipline,questions:bank})).status,401);
  assert.equal((await call('teacher/bank',{discipline,questions:bank},token)).status,200);
- assert.equal((await call('health?discipline=instrumentacao')).data.ready,true);
  const started=await call('start',student);
  assert.equal(started.status,200);
  assert.equal(started.data.questions.length,40);
- assert.ok(started.data.questions.every(q=>!('correct' in q)));
- const answers=started.data.questions.map(q=>q.options.indexOf('Resposta de teste'));
+ assert.ok(started.data.questions.every(item=>!('correct' in item)));
+ const answers=started.data.questions.map(item=>item.options.indexOf('Resposta de teste'));
  const submitted=await call('submit',{...student,id:started.data.id,token:started.data.token,answers,saidas:0,forced:false});
  assert.equal(submitted.status,200);
  assert.equal(submitted.data.score,10);
@@ -87,6 +89,17 @@ test('sessões antigas não funcionam, tentativas expiram e notas antigas são p
  assert.equal((await call('teacher/results',undefined,token)).data.records[0].score,9.75);
  DB.sqlite.close();
 });
+test('disciplina de manutenção aceita 30 questões, imagens e quatro alternativas',async()=>{
+ const {DB,call,token}=await setup(),discipline='manutencao-maquinas';
+ const bankResult=await call('teacher/bank',{discipline,questions:maintenanceBank},token);assert.equal(bankResult.status,200);assert.equal(bankResult.data.count,30);
+ const health=(await call('health?discipline='+discipline)).data;assert.equal(health.ready,true);assert.equal(health.expected,30);
+ const generated=(await call('teacher/generate-code',{discipline,turma:classes[0]},token)).data;
+ const student={discipline,name:'Aluna Manutenção',turma:classes[0],codigo:generated.codigo,nonce:randomToken()};
+ const started=(await call('start',student)).data;assert.equal(started.questions.length,30);assert.ok(started.questions.some(q=>q.image));assert.ok(started.questions.some(q=>q.options.length===4));assert.ok(started.questions.every(q=>q.correct===undefined));
+ const answers=started.questions.map(q=>q.options.indexOf('Resposta de teste'));
+ const submitted=await call('submit',{...student,id:started.id,token:started.token,answers,saidas:0,forced:false});assert.equal(submitted.status,200);assert.equal(submitted.data.score,10);
+ DB.sqlite.close();
+});
 test('limite de login, corpo inválido, origem e indisponibilidade',async()=>{
  const {DB,env,call}=await setup();
  for(let i=0;i<8;i++)assert.equal((await call('login',{password:'errada'},undefined,'192.0.2.55')).status,401);
@@ -133,5 +146,25 @@ test('cada professor cria turmas e vê somente seus próprios alunos',async()=>{
  assert.equal((await call('teacher/reset',{codigo:codeA},loginB.token)).status,403);
  DB.sqlite.close();
 });
-
+test('professor e administrador gerenciam apenas suas turmas sem apagar resultados',async()=>{
+ const {DB,call,token}=await setup();
+ assert.equal((await call('teacher/classes',undefined,token)).data.classes.length,classes.length);
+ assert.equal((await call('teacher/classes',{name:'Turma Admin'},token)).status,200);
+ assert.equal((await call('teacher/generate-code',{turma:'Turma Admin'},token)).status,200);
+ await call('teacher/accounts',{name:'Professora A',username:'prof.a',password:'senha123'},token);
+ await call('teacher/accounts',{name:'Professor B',username:'prof.b',password:'senha123'},token);
+ const a=(await call('login',{username:'prof.a',password:'senha123'},undefined,'192.0.2.91')).data.token;
+ const b=(await call('login',{username:'prof.b',password:'senha123'},undefined,'192.0.2.92')).data.token;
+ assert.equal((await call('teacher/classes',{name:'Turma A'},a)).status,200);
+ assert.equal((await call('teacher/classes/remove',{name:'Turma A'},b)).status,404);
+ assert.equal((await call('teacher/classes/remove',{name:'Turma Admin'},a)).status,404);
+ assert.equal((await call('teacher/classes',undefined,b)).data.classes.length,0);
+ assert.equal((await call('teacher/classes/remove',{name:'Turma A'},a)).status,200);
+ assert.equal((await call('teacher/generate-code',{turma:'Turma A'},a)).status,403);
+ assert.equal((await call('teacher/classes/remove',{name:'Turma Admin'},token)).status,200);
+ assert.equal((await call('teacher/generate-code',{turma:'Turma Admin'},token)).status,400);
+ assert.equal((await call('teacher/classes',{name:'Turma Admin'},token)).status,200);
+ assert.equal((await call('teacher/classes',undefined,token)).data.classes.some(c=>c.name==='Turma Admin'),true);
+ DB.sqlite.close();
+});
 
