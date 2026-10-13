@@ -163,6 +163,7 @@ test('professor e administrador gerenciam apenas suas turmas sem apagar resultad
  assert.equal((await call('teacher/generate-code',{turma:'Turma A'},a)).status,403);
  assert.equal((await call('teacher/classes/remove',{name:'Turma Admin'},token)).status,200);
  assert.equal((await call('teacher/generate-code',{turma:'Turma Admin'},token)).status,400);
+ assert.equal((await call('classes')).data.classes.includes('Turma Admin'),true);
  assert.equal((await call('teacher/classes',{name:'Turma Admin'},token)).status,200);
  assert.equal((await call('teacher/classes',undefined,token)).data.classes.some(c=>c.name==='Turma Admin'),true);
  DB.sqlite.close();
