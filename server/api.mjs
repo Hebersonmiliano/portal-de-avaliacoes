@@ -1,4 +1,5 @@
 import {classes,hex,randomToken,sha,constantEqual,passwordVerifier,attemptToken,arrangeQuestions} from './security.mjs';
+import {publicAccountRoute,teacherAccountRoute} from './account.mjs';
 const origins=new Set(['https://hebersonmiliano.github.io','https://provabd.hebersonmiliano.chatgpt.site']);
 const DISCIPLINE_COUNTS=new Map([['banco-dados',40],['jogos-digitais',40],['desenvolvimento-web',40],['projeto-de-vida',40],['mundo-trabalho-4',40],['fundamentos-redes',40],['manutencao-maquinas',30],['logica-python',40],['metodologias-ageis',40],['instrumentacao',40]]);
 const DISCIPLINES=new Set(DISCIPLINE_COUNTS.keys());
@@ -16,6 +17,7 @@ async function ensureLegacyCodes(env){const queries=[];for(const turma of classe
 async function ensureDisciplineCodes(env,discipline){const queries=[];for(const turma of classes)for(let i=1;i<=40;i++){const codigo=hex(crypto.getRandomValues(new Uint8Array(10))).toUpperCase().match(/.{1,5}/g).join('-');queries.push(db(env).prepare('INSERT OR IGNORE INTO discipline_codes (discipline,codigo,turma,slot,state) VALUES (?,?,?,?,?)').bind(discipline,codigo,turma,turma+':'+i,'available'));}for(let i=0;i<queries.length;i+=50)await db(env).batch(queries.slice(i,i+50));}
 async function handle(req,env){
  const url=new URL(req.url),path=url.pathname;
+ const accountResponse=await publicAccountRoute(req,env,path);if(accountResponse)return accountResponse;
  if(req.method==='GET'&&path==='/api/health'){
   const discipline=url.searchParams.get('discipline')||'banco-dados';if(!DISCIPLINES.has(discipline))return json({error:'Disciplina inválida.'},400);
   const row=discipline==='banco-dados'?await db(env).prepare('SELECT COUNT(*) n FROM private_question_bank').first():await db(env).prepare('SELECT COUNT(*) n FROM discipline_question_bank WHERE discipline=?').bind(discipline).first(),expected=DISCIPLINE_COUNTS.get(discipline);return json({ok:true,discipline,ready:row.n>=expected,count:row.n,expected});
@@ -33,6 +35,7 @@ async function handle(req,env){
  }
  if(path.startsWith('/api/teacher/')){
   const session=await authenticated(req,env);if(!session)return json({error:'Entre novamente no painel do professor.'},401);
+  const teacherAccountResponse=await teacherAccountRoute(req,env,path,session);if(teacherAccountResponse)return teacherAccountResponse;
   if(req.method==='POST'&&path==='/api/teacher/logout'){await db(env).prepare('DELETE FROM secure_teacher_sessions WHERE token=?').bind(await sha(bearer(req))).run();return json({ok:true});}
   if(req.method==='GET'&&path==='/api/teacher/classes'){if(session.role==='admin'){const rows=await db(env).prepare('SELECT name,created_at FROM admin_classes WHERE active=1 ORDER BY name COLLATE NOCASE').all();return json({classes:rows.results});}const rows=await db(env).prepare('SELECT id,name,created_at FROM teacher_classes WHERE teacher_username=? ORDER BY name COLLATE NOCASE').bind(session.teacher_username).all();return json({classes:rows.results});}
   if(req.method==='POST'&&path==='/api/teacher/classes'){const b=await req.json(),name=typeof b?.name==='string'?b.name.trim():'';if(name.length<3||name.length>100)return json({error:'Informe um nome de turma com 3 a 100 caracteres.'},400);if(session.role==='admin'){const existing=await db(env).prepare('SELECT active FROM admin_classes WHERE name=? COLLATE NOCASE').bind(name).first();if(existing?.active)return json({error:'Você já cadastrou esta turma.'},409);await db(env).prepare('INSERT INTO admin_classes (name,active,created_at) VALUES (?,1,?) ON CONFLICT(name) DO UPDATE SET active=1').bind(name,new Date().toISOString()).run();return json({ok:true,name});}if(await db(env).prepare('SELECT id FROM teacher_classes WHERE teacher_username=? AND name=? COLLATE NOCASE').bind(session.teacher_username,name).first())return json({error:'Você já cadastrou esta turma.'},409);const id=crypto.randomUUID();await db(env).prepare('INSERT INTO teacher_classes (id,teacher_username,name,created_at) VALUES (?,?,?,?)').bind(id,session.teacher_username,name,new Date().toISOString()).run();return json({ok:true,id,name});}

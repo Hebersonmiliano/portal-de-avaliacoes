@@ -168,4 +168,42 @@ test('professor e administrador gerenciam apenas suas turmas sem apagar resultad
  assert.equal((await call('teacher/classes',undefined,token)).data.classes.some(c=>c.name==='Turma Admin'),true);
  DB.sqlite.close();
 });
+test('professor confirma e-mail e recupera senha sem alterar dados anteriores',async()=>{
+ const {DB,env,call,token}=await setup(),sent=[];env.MAIL_SEND=async message=>sent.push(message);
+ await call('teacher/accounts',{name:'Professora Ana',username:'ana.prof',password:'senha-antiga'},token);
+ const login=(await call('login',{username:'ana.prof',password:'senha-antiga'},undefined,'192.0.2.101')).data.token;
+ assert.equal((await call('teacher/profile',undefined,login)).data.email,null);
+ assert.equal((await call('teacher/request-email-verification',{email:'ana@escola.edu.br',currentPassword:'errada'},login)).status,403);
+ assert.equal((await call('teacher/request-email-verification',{email:'ana@escola.edu.br',currentPassword:'senha-antiga'},login)).status,200);
+ assert.equal(sent.length,1);
+ const verifyToken=sent[0].link.split('#confirm=')[1];
+ assert.equal((await call('account/confirm-email',{token:verifyToken})).status,200);
+ assert.equal((await call('account/confirm-email',{token:verifyToken})).status,400);
+ assert.equal((await call('teacher/profile',undefined,login)).data.email,'ana@escola.edu.br');
+ assert.equal((await call('account/request-reset',{identity:'inexistente'},undefined,'192.0.2.102')).status,200);
+ assert.equal(sent.length,1);
+ assert.equal((await call('account/request-reset',{identity:'ana.prof'},undefined,'192.0.2.103')).status,200);
+ const resetToken=sent[1].link.split('#reset=')[1];
+ assert.equal((await call('account/reset',{token:resetToken,password:'nova-senha-segura-123'})).status,200);
+ assert.equal((await call('account/reset',{token:resetToken,password:'outra-senha-segura-123'})).status,400);
+ assert.equal((await call('teacher/profile',undefined,login)).status,401);
+ assert.equal((await call('login',{username:'ana.prof',password:'senha-antiga'},undefined,'192.0.2.104')).status,401);
+ assert.equal((await call('login',{username:'ana.prof',password:'nova-senha-segura-123'},undefined,'192.0.2.105')).status,200);
+ DB.sqlite.close();
+});
+test('troca de senha e recuperação emergencial exigem permissões',async()=>{
+ const {DB,call,token}=await setup();
+ await call('teacher/accounts',{name:'Professor Caio',username:'caio.prof',password:'senha-antiga'},token);
+ const teacher=(await call('login',{username:'caio.prof',password:'senha-antiga'},undefined,'192.0.2.106')).data.token;
+ assert.equal((await call('teacher/accounts/recovery',{username:'caio.prof'},teacher)).status,403);
+ assert.equal((await call('teacher/change-password',{currentPassword:'senha-antiga',newPassword:'nova-senha-segura-123'},token)).status,403);
+ assert.equal((await call('teacher/change-password',{currentPassword:'errada',newPassword:'nova-senha-segura-123'},teacher)).status,403);
+ assert.equal((await call('teacher/change-password',{currentPassword:'senha-antiga',newPassword:'nova-senha-segura-123'},teacher)).status,200);
+ assert.equal((await call('teacher/profile',undefined,teacher)).status,401);
+ const recovery=await call('teacher/accounts/recovery',{username:'caio.prof'},token);assert.equal(recovery.status,200);
+ const resetToken=recovery.data.link.split('#reset=')[1];
+ assert.equal((await call('account/reset',{token:resetToken,password:'senha-final-segura-123'})).status,200);
+ assert.equal((await call('login',{username:'caio.prof',password:'senha-final-segura-123'},undefined,'192.0.2.107')).status,200);
+ DB.sqlite.close();
+});
 

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 fs.mkdirSync('dist/server',{recursive:true});fs.mkdirSync('dist/.openai',{recursive:true});
 const html=fs.readFileSync('server/page.html','utf8').replace('<!-- APPLICATION_SCRIPT -->','<script>'+fs.readFileSync('server/client.js','utf8')+'</script>').trimEnd()+'\n';
 fs.writeFileSync('dist/index.html',html);
-fs.copyFileSync('server/api.mjs','dist/server/api.mjs');fs.copyFileSync('server/security.mjs','dist/server/security.mjs');
+fs.copyFileSync('server/api.mjs','dist/server/api.mjs');fs.copyFileSync('server/security.mjs','dist/server/security.mjs');fs.copyFileSync('server/account.mjs','dist/server/account.mjs');
 // The retired answer key must never be included in a newly packaged build.
 if(fs.existsSync('dist/server/questions.mjs'))fs.unlinkSync('dist/server/questions.mjs');
 fs.copyFileSync('.openai/hosting.json','dist/.openai/hosting.json');
