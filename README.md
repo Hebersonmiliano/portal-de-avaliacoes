@@ -18,6 +18,16 @@ O gabarito e as 40 questões novas ficam exclusivamente na tabela private_questi
 
 A carga do banco usa POST /api/teacher/bank com uma sessão autenticada. A resposta informa apenas a quantidade gravada. Não existe rota pública de exportação do banco. As tentativas recebem somente enunciados e alternativas.
 
+## Trilha Dev (jogo de revisão)
+
+`dist/trilha-dev.html` é uma cópia do jogo Trilha Dev. A fonte fica no repositório `portal-jogos`, em `jogos/missao-html5/index.html`; ao atualizar o jogo lá, copie de novo trocando o título, o link de volta e o cabeçalho do certificado. O progresso fica no `localStorage`, que é o mesmo nos dois sites porque ambos estão em `hebersonmiliano.github.io`.
+
+Com uma turma escolhida, o jogo grava o melhor resultado de cada fase na tabela `game_results` (migração `drizzle/0008_resultados_jogos.sql`). As rotas ficam em `server/games.mjs`: `POST /api/game/result` e `GET /api/game/ranking` são públicas, com limite por IP; `GET /api/teacher/game-results` e `POST /api/teacher/game-results/remove` exigem sessão, e cada professor vê só as próprias turmas. O painel mostra tudo na seção Trilha Dev.
+
+O jogo corrige as respostas no navegador do aluno. A pontuação pode ser forjada e nunca deve ser usada como nota oficial. O ranking público mostra só o primeiro nome e a inicial do último.
+
+Enquanto a API de produção não for publicada com essas rotas, o jogo guarda os resultados no aparelho e reenvia depois; o painel avisa que a seção ainda não está disponível.
+
 ## Autenticação
 
 A senha usa PBKDF2-SHA256 com sal e 100.000 iterações. Os valores TEACHER_PASSWORD_SALT, TEACHER_PASSWORD_VERIFIER e ATTEMPT_SECRET são segredos do ambiente Sites. Não existe senha nem verificador de produção no repositório. Sessões antigas foram descontinuadas; as novas expiram em duas horas e são revogadas ao sair.

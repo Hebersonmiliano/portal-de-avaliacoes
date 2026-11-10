@@ -148,6 +148,14 @@ for (const file of ['logica-python-trilha.html', 'logica-python-simulado.html', 
 requireText(read('logica-python-trilha.html'), 'Conheça Python', 'logica-python-trilha.html');
 requireText(read('logica-python.html'), "const API='https://provabd.hebersonmiliano.chatgpt.site'", 'logica-python.html');
 
+// Trilha Dev: jogo de revisão que grava resultados no banco e aparece no painel.
+requireFile('trilha-dev.html');
+requireText(index, 'href="trilha-dev.html"', 'index.html');
+const trilhaDev = read('trilha-dev.html');
+for (const marker of ['var API = "https://provabd.hebersonmiliano.chatgpt.site"', 'JOGO_ID = "trilha-dev"', '/api/game/result']) requireText(trilhaDev, marker, 'trilha-dev.html');
+for (const marker of ['gamePanel', 'loadGame', '/api/teacher/game-results']) requireText(panel, marker, 'painel-professor.html');
+requireText(fs.readFileSync('server/games.mjs','utf8'), "'trilha-dev'", 'server/games.mjs');
+
 console.log('Publicação aprovada: 11 disciplinas e recursos anteriores preservados.');
 
 
