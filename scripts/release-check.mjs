@@ -20,10 +20,11 @@ const disciplines = [
   ['Técnico em Manutenção de Máquinas Industriais', 'manutencao-maquinas.html'],
   ['Lógica de Programação e Python', 'logica-python.html'],
   ['Metodologias Ágeis', 'metodologias-ageis.html'],
+  ['Fundamentos de Desenvolvimento de Sistemas', 'fundamentos-ds.html'],
 ];
 
 const index = read('index.html');
-requireText(index, '11 DISCIPLINAS', 'index.html');
+requireText(index, '12 DISCIPLINAS', 'index.html');
 if (index.includes('6 DISCIPLINAS')) throw new Error('O portal voltou a informar apenas 6 disciplinas.');
 for (const [name, file] of disciplines) {
   requireText(index, name, 'index.html');
@@ -111,6 +112,11 @@ requireText(testIndex, 'href="fundamentos-ds.html"', 'teste/index.html');
 const dsExam = read('teste/fundamentos-ds.html');
 for (const marker of ["DISC='fundamentos-ds'", 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', '40 questões']) requireText(dsExam, marker, 'teste/fundamentos-ds.html');
 if (dsExam.includes('correct:') || dsExam.includes('Acesso do Professor')) throw new Error('A prova de teste não deve expor o gabarito nem o acesso interno do professor.');
+const productionDsExam = read('fundamentos-ds.html');
+for (const marker of ["DISC='fundamentos-ds'", "const API='https://provabd.hebersonmiliano.chatgpt.site'", '40 questões']) requireText(productionDsExam, marker, 'fundamentos-ds.html');
+if (productionDsExam.includes('correct:') || productionDsExam.includes('AMBIENTE DE TESTE') || productionDsExam.includes('noindex,nofollow') || productionDsExam.includes('portal-avaliacoes-homologacao')) throw new Error('A prova de produção contém gabarito ou marcador de teste.');
+requireText(panel, "id:'fundamentos-ds'", 'painel-professor.html');
+requireText(index, 'href="fundamentos-ds.html"', 'index.html');
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
 if ((testIndex.match(/href="instrumentacao\.html"/g) || []).length !== 1) throw new Error('O card de teste de Instrumentação deve ter somente um botão de prova.');
@@ -161,6 +167,6 @@ for (const marker of ['var API = "https://provabd.hebersonmiliano.chatgpt.site"'
 for (const marker of ['gamePanel', 'loadGame', '/api/teacher/game-results']) requireText(panel, marker, 'painel-professor.html');
 requireText(fs.readFileSync('server/games.mjs','utf8'), "'trilha-dev'", 'server/games.mjs');
 
-console.log('Publicação aprovada: 11 disciplinas e recursos anteriores preservados.');
+console.log('Publicação aprovada: 12 disciplinas e recursos anteriores preservados.');
 
 
