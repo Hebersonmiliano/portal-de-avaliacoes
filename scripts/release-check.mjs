@@ -105,7 +105,12 @@ for (const file of ['jogos-digitais-piloto-trilha.html','jogos-digitais-piloto-s
   if (content.includes('AMBIENTE DE TESTE') || content.includes('noindex,nofollow') || content.includes('portal-teste-')) throw new Error(`Marcador de homologação em produção: ${file}`);
 }
 
-requireText(testIndex, '11 DISCIPLINAS', 'teste/index.html');
+requireText(testIndex, '12 DISCIPLINAS', 'teste/index.html');
+requireFile('teste/fundamentos-ds.html');
+requireText(testIndex, 'href="fundamentos-ds.html"', 'teste/index.html');
+const dsExam = read('teste/fundamentos-ds.html');
+for (const marker of ["DISC='fundamentos-ds'", 'portal-avaliacoes-homologacao.hebersonmiliano.chatgpt.site', '40 questões']) requireText(dsExam, marker, 'teste/fundamentos-ds.html');
+if (dsExam.includes('correct:') || dsExam.includes('Acesso do Professor')) throw new Error('A prova de teste não deve expor o gabarito nem o acesso interno do professor.');
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html','instrumentacao-dados.js','instrumentacao-jornada.js','instrumentacao.css']) requireFile(`teste/${file}`);
 for (const file of ['instrumentacao-trilha.html','instrumentacao-simulado.html','instrumentacao.html']) requireText(testIndex, `href="${file}"`, 'teste/index.html');
 if ((testIndex.match(/href="instrumentacao\.html"/g) || []).length !== 1) throw new Error('O card de teste de Instrumentação deve ter somente um botão de prova.');
