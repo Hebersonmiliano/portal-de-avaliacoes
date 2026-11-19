@@ -1,8 +1,14 @@
-// Resultados dos jogos de estudo (Trilha Dev).
+// Resultados dos jogos de estudo (Trilha Dev e Torneio de Matemática).
 // O jogo corrige as respostas no navegador do aluno, então estes números servem para
 // ranking e acompanhamento. Nunca use como nota oficial: a nota vem da prova com código.
-const GAMES=new Map([['trilha-dev',new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]])]]);
-const MAX_XP=1500; // teto por fase: 5 questões com todos os bônus ficam abaixo disso
+// Cada jogo: trilhas (com o número de fases) e o teto de pontos por fase.
+// Trilha Dev: 5 questões com todos os bônus ficam abaixo de 1500.
+// Torneio de Matemática: uma rodada de 60 s por nível (Normal ou Desafio das 4); cada nível é uma trilha de 1 fase.
+// "global": o ranking também pode ser pedido sem turma, juntando a escola toda.
+const GAMES=new Map([
+ ['trilha-dev',{trails:new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]]),maxXp:1500}],
+ ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1]]),maxXp:3000,global:true}],
+]);
 const MAX_ROWS_PER_CLASS=6300; // 300 alunos x 21 fases: barra o enchimento do banco com nomes falsos
 const WINDOW=15*60*1000;
 const clean=value=>typeof value==='string'?value.trim().replace(/\s+/g,' '):'';
@@ -19,8 +25,8 @@ async function knownClass(db,env,turma){
 export async function publicGameRoute(req,env,path,url,{db,json,throttle}){
  if(req.method==='POST'&&path==='/api/game/result'){
   if(!await throttle(req,env,'game-result',1500,WINDOW))return json({error:'Muitos envios desta rede. Aguarde alguns minutos.'},429);
-  const b=await req.json(),trails=GAMES.get(b?.game),name=clean(b?.name),requested=clean(b?.turma);
-  if(!trails||!trails.has(b.trail)||!int(b.phase,0,trails.get(b.trail)-1)||name.length<2||name.length>40||!requested||requested.length>100||!int(b.xp,0,MAX_XP)||!int(b.stars,1,3)||!int(b.firstTry,0,5))return json({error:'Dados inválidos.'},400);
+  const b=await req.json(),game=GAMES.get(b?.game),trails=game?.trails,name=clean(b?.name),requested=clean(b?.turma);
+  if(!trails||!trails.has(b.trail)||!int(b.phase,0,trails.get(b.trail)-1)||name.length<2||name.length>40||!requested||requested.length>100||!int(b.xp,0,game.maxXp)||!int(b.stars,1,3)||!int(b.firstTry,0,5))return json({error:'Dados inválidos.'},400);
   const turma=await knownClass(db,env,requested);if(!turma)return json({error:'Turma não encontrada.'},404);
   const existing=await db(env).prepare('SELECT xp FROM game_results WHERE game=? AND turma=? AND name=? AND trail=? AND phase=?').bind(b.game,turma,name,b.trail,b.phase).first();
   if(!existing){const total=await db(env).prepare('SELECT COUNT(*) n FROM game_results WHERE game=? AND turma=?').bind(b.game,turma).first();if(total.n>=MAX_ROWS_PER_CLASS)return json({error:'Esta turma atingiu o limite de registros. Avise o professor.'},429);}
@@ -30,10 +36,16 @@ export async function publicGameRoute(req,env,path,url,{db,json,throttle}){
  }
  if(req.method==='GET'&&path==='/api/game/ranking'){
   if(!await throttle(req,env,'game-ranking',3000,WINDOW))return json({error:'Muitas consultas desta rede. Aguarde alguns minutos.'},429);
-  const game=url.searchParams.get('game')||'',turma=clean(url.searchParams.get('turma'));
-  if(!GAMES.has(game)||!turma||turma.length>100)return json({error:'Dados inválidos.'},400);
-  const rows=await db(env).prepare('SELECT name,SUM(xp) xp,SUM(stars) stars,COUNT(*) phases FROM game_results WHERE game=? AND turma=? GROUP BY name ORDER BY xp DESC,name LIMIT 20').bind(game,turma).all();
-  return json({game,turma,ranking:rows.results.map(r=>({name:shortName(r.name),xp:r.xp,stars:r.stars,phases:r.phases}))});
+  const game=url.searchParams.get('game')||'',turma=clean(url.searchParams.get('turma')),trail=url.searchParams.get('trail')||'',cfg=GAMES.get(game);
+  if(!cfg||(!turma&&!cfg.global)||turma.length>100||(trail&&!cfg.trails.has(trail)))return json({error:'Dados inválidos.'},400);
+  // Com "trail", o ranking é só daquela trilha (no Torneio, um nível); sem ela, soma todas.
+  // Sem turma (só jogos "global"), junta todas as turmas e informa a turma de cada aluno.
+  const where=['game=?'],args=[game];
+  if(turma){where.push('turma=?');args.push(turma);}
+  if(trail){where.push('trail=?');args.push(trail);}
+  const rows=await db(env).prepare('SELECT name,turma,SUM(xp) xp,SUM(stars) stars,COUNT(*) phases FROM game_results WHERE '+where.join(' AND ')+' GROUP BY name,turma ORDER BY xp DESC,name LIMIT 20').bind(...args).all();
+  if(!turma)return json({game,turma:'',...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),turma:r.turma,xp:r.xp,stars:r.stars,phases:r.phases}))});
+  return json({game,turma,...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),xp:r.xp,stars:r.stars,phases:r.phases}))});
  }
  return null;
 }
