@@ -66,3 +66,46 @@ test('Painel exige login e cada professor vê só as próprias turmas',async()=>
  assert.equal((await call('teacher/game-results?game=trilha-dev',undefined,teacher)).data.results.length,0);
  assert.equal((await call('teacher/game-results?game=trilha-dev',undefined,token)).data.results.length,1);
 });
+
+const torneio=(extra={})=>({game:'torneio-matematica',name:'Ana Souza',turma,trail:'medio',phase:0,xp:640,stars:3,firstTry:5,...extra});
+
+test('Torneio de Matemática grava a melhor rodada de cada nível',async()=>{
+ const {call,token}=await setup();
+ assert.equal((await call('game/result',torneio())).data.xp,640);
+ assert.equal((await call('game/result',torneio({xp:300,stars:1}))).data.xp,640);
+ assert.equal((await call('game/result',torneio({xp:2900}))).data.xp,2900);
+ for(const bad of [{trail:'html'},{trail:'extremo'},{phase:1},{xp:3001}])
+  assert.equal((await call('game/result',torneio(bad))).status,400,JSON.stringify(bad));
+ // O teto da Trilha Dev continua 1500.
+ assert.equal((await call('game/result',result({xp:2000}))).status,400);
+ const list=await call('teacher/game-results?game=torneio-matematica',undefined,token);
+ assert.equal(list.data.results.length,1);
+ assert.equal(list.data.results[0].plays,3);
+});
+
+test('Ranking do Torneio filtra por nível ou soma os níveis',async()=>{
+ const {call}=await setup();
+ await call('game/result',torneio({xp:500}));
+ await call('game/result',torneio({trail:'d4-dificil',xp:900}));
+ await call('game/result',torneio({name:'Bruno Lima',xp:700}));
+ const medio=await call('game/ranking?game=torneio-matematica&trail=medio&turma='+encodeURIComponent(turma));
+ assert.equal(medio.data.trail,'medio');
+ assert.deepEqual(medio.data.ranking.map(r=>[r.name,r.xp]),[['Bruno L.',700],['Ana S.',500]]);
+ const d4=await call('game/ranking?game=torneio-matematica&trail=d4-dificil&turma='+encodeURIComponent(turma));
+ assert.deepEqual(d4.data.ranking.map(r=>[r.name,r.xp]),[['Ana S.',900]]);
+ const geral=await call('game/ranking?game=torneio-matematica&turma='+encodeURIComponent(turma));
+ assert.deepEqual(geral.data.ranking.map(r=>[r.name,r.xp]),[['Ana S.',1400],['Bruno L.',700]]);
+ assert.equal((await call('game/ranking?game=torneio-matematica&trail=html&turma='+encodeURIComponent(turma))).status,400);
+ assert.equal((await call('game/ranking?game=trilha-dev&trail=medio&turma='+encodeURIComponent(turma))).status,400);
+});
+
+test('Torneio tem ranking global da escola; Trilha Dev continua exigindo turma',async()=>{
+ const {call,token}=await setup();
+ assert.equal((await call('teacher/classes',{name:'Turma B'},token)).status,200);
+ await call('game/result',torneio({xp:500}));
+ await call('game/result',torneio({turma:'Turma B',name:'Caio Rocha',xp:800}));
+ const escola=await call('game/ranking?game=torneio-matematica&trail=medio');
+ assert.equal(escola.status,200);
+ assert.deepEqual(escola.data.ranking.map(r=>[r.name,r.turma,r.xp]),[['Caio R.','Turma B',800],['Ana S.',turma,500]]);
+ assert.equal((await call('game/ranking?game=trilha-dev')).status,400);
+});
