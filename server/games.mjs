@@ -7,7 +7,7 @@
 // "global": o ranking também pode ser pedido sem turma, juntando a escola toda.
 const GAMES=new Map([
  ['trilha-dev',{trails:new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]]),maxXp:1500}],
- ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1]]),maxXp:3000,global:true}],
+ ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1]]),maxXp:3000,global:true,internalClass:'TORNEIO DE MATEMATICA'}],
  // Arena Dev: torneio eliminatório (até 3 partidas com bônus de vitória) e treino de 60 s; o jogo limita os pontos a 15000.
  ['arena-dev',{trails:new Map([['torneio',1],['treino',1]]),maxXp:15000,global:true}],
 ]);
@@ -29,7 +29,8 @@ export async function publicGameRoute(req,env,path,url,{db,json,throttle}){
   if(!await throttle(req,env,'game-result',1500,WINDOW))return json({error:'Muitos envios desta rede. Aguarde alguns minutos.'},429);
   const b=await req.json(),game=GAMES.get(b?.game),trails=game?.trails,name=clean(b?.name),requested=clean(b?.turma);
   if(!trails||!trails.has(b.trail)||!int(b.phase,0,trails.get(b.trail)-1)||name.length<2||name.length>40||!requested||requested.length>100||!int(b.xp,0,game.maxXp)||!int(b.stars,1,3)||!int(b.firstTry,0,5))return json({error:'Dados inválidos.'},400);
-  const turma=await knownClass(db,env,requested);if(!turma)return json({error:'Turma não encontrada.'},404);
+  const turma=requested===game.internalClass?game.internalClass:await knownClass(db,env,requested);
+  if(!turma)return json({error:'Turma não encontrada.'},404);
   const existing=await db(env).prepare('SELECT xp FROM game_results WHERE game=? AND turma=? AND name=? AND trail=? AND phase=?').bind(b.game,turma,name,b.trail,b.phase).first();
   if(!existing){const total=await db(env).prepare('SELECT COUNT(*) n FROM game_results WHERE game=? AND turma=?').bind(b.game,turma).first();if(total.n>=MAX_ROWS_PER_CLASS)return json({error:'Esta turma atingiu o limite de registros. Avise o professor.'},429);}
   const now=new Date().toISOString();
