@@ -71,7 +71,8 @@ for (const marker of ['Missão: Construa seu Primeiro Jogo', 'Chefão final: Bug
 const gamesSimulationProduction = read('jogos-digitais-simulado.html');
 for (const marker of ['Arena dos Desafios', 'Poder: eliminar opção', 'portal-jogos-simulado-v2']) requireText(gamesSimulationProduction, marker, 'jogos-digitais-simulado.html');
 const gamesExamProduction = read('jogos-digitais.html');
-for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa dos 40 desafios', "const API='https://provabd.hebersonmiliano.chatgpt.site'"]) requireText(gamesExamProduction, marker, 'jogos-digitais.html');
+// A prova gamificada (23/11/2026) chama o mapa de "Mapa das fases"; a versão de teste ainda usa "Mapa dos 40 desafios".
+for (const marker of ['Desafio Final: Portal dos 40 Códigos', 'Mapa das fases', "const API='https://provabd.hebersonmiliano.chatgpt.site'"]) requireText(gamesExamProduction, marker, 'jogos-digitais.html');
 for (const [content,file] of [[gamesTrailProduction,'jogos-digitais-trilha.html'],[gamesSimulationProduction,'jogos-digitais-simulado.html'],[gamesExamProduction,'jogos-digitais.html']]) {
   if (content.includes('AMBIENTE DE TESTE') || content.includes('homologacao.hebersonmiliano')) throw new Error(`Conteúdo de homologação encontrado em produção: ${file}`);
 }

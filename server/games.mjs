@@ -1,4 +1,4 @@
-// Resultados dos jogos de estudo (Trilha Dev e Torneio de Matemática).
+// Resultados dos jogos de estudo (Trilha Dev, Torneio de Matemática e Arena Dev).
 // O jogo corrige as respostas no navegador do aluno, então estes números servem para
 // ranking e acompanhamento. Nunca use como nota oficial: a nota vem da prova com código.
 // Cada jogo: trilhas (com o número de fases) e o teto de pontos por fase.
@@ -8,6 +8,8 @@
 const GAMES=new Map([
  ['trilha-dev',{trails:new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]]),maxXp:1500}],
  ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1]]),maxXp:3000,global:true}],
+ // Arena Dev: torneio eliminatório (até 3 partidas com bônus de vitória) e treino de 60 s; o jogo limita os pontos a 15000.
+ ['arena-dev',{trails:new Map([['torneio',1],['treino',1]]),maxXp:15000,global:true}],
 ]);
 const MAX_ROWS_PER_CLASS=6300; // 300 alunos x 21 fases: barra o enchimento do banco com nomes falsos
 const WINDOW=15*60*1000;
