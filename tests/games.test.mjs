@@ -110,18 +110,18 @@ test('Torneio tem ranking global da escola; Trilha Dev continua exigindo turma',
  assert.equal((await call('game/ranking?game=trilha-dev')).status,400);
 });
 
-test('Code Cup grava torneio e treino e tem ranking da escola',async()=>{
+test('Arena Dev grava torneio e treino e tem ranking da escola',async()=>{
  const {call}=await setup();
- const cup=(extra={})=>({game:'code-cup',name:'Ana Souza',turma,trail:'torneio',phase:0,xp:4200,stars:2,firstTry:2,...extra});
+ const cup=(extra={})=>({game:'arena-dev',name:'Ana Souza',turma,trail:'torneio',phase:0,xp:4200,stars:2,firstTry:2,...extra});
  assert.equal((await call('game/result',cup())).status,200);
  assert.equal((await call('game/result',cup({xp:3000}))).status,200);
  assert.equal((await call('game/result',cup({trail:'treino',xp:5000,stars:3,firstTry:5}))).status,200);
  assert.equal((await call('game/result',cup({name:'Bruno Lima',xp:9000,stars:3,firstTry:3}))).status,200);
  for(const bad of [{trail:'medio'},{xp:15001},{phase:1}])
   assert.equal((await call('game/result',cup(bad))).status,400,JSON.stringify(bad));
- const torneio=await call('game/ranking?game=code-cup&trail=torneio');
+ const torneio=await call('game/ranking?game=arena-dev&trail=torneio');
  assert.equal(torneio.status,200);
  assert.deepEqual(torneio.data.ranking.map(r=>[r.name,r.xp]),[['Bruno L.',9000],['Ana S.',4200]]);
- const turmaRank=await call('game/ranking?game=code-cup&trail=treino&turma='+encodeURIComponent(turma));
+ const turmaRank=await call('game/ranking?game=arena-dev&trail=treino&turma='+encodeURIComponent(turma));
  assert.deepEqual(turmaRank.data.ranking.map(r=>[r.name,r.xp]),[['Ana S.',5000]]);
 });
