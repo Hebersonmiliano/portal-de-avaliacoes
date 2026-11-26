@@ -22,12 +22,16 @@ async function sendScore(trail, points, expected) {
 for (const [points, expected] of [[635, 635], [720, 720], [630, 720]]) {
   await sendScore('medio', points, expected);
 }
-await sendScore('divisao', 250, 250);
+const categoryScores = [
+  ['soma-facil', 110], ['soma-medio', 220], ['soma-dificil', 330],
+  ['multiplicacao', 210], ['divisao', 250], ['d4-facil', 180],
+];
+for (const [trail, points] of categoryScores) await sendScore(trail, points, points);
 
 const response = await worker.fetch(new Request(base + '/ranking?game=torneio-matematica&trail=medio', {headers}), env);
 assert.equal(response.status, 200);
 assert.equal((await response.json()).ranking[0]?.xp, 720);
-for (const [query, expected] of [['&trail=divisao', 250], ['', 720]]) {
+for (const [query, expected] of [...categoryScores.map(([trail, points]) => ['&trail=' + trail, points]), ['', 900]]) {
   const ranking = await worker.fetch(new Request(base + '/ranking?game=torneio-matematica' + query, {headers}), env);
   assert.equal(ranking.status, 200);
   assert.equal((await ranking.json()).ranking[0]?.xp, expected);

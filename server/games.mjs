@@ -3,11 +3,15 @@
 // ranking e acompanhamento. Nunca use como nota oficial: a nota vem da prova com código.
 // Cada jogo: trilhas (com o número de fases) e o teto de pontos por fase.
 // Trilha Dev: 5 questões com todos os bônus ficam abaixo de 1500.
-// Torneio de Matemática: uma rodada de 60 s por nível (Normal ou Desafio das 4); cada nível é uma trilha de 1 fase.
+// Torneio de Matemática: cada combinação de modo e nível é uma trilha de uma fase.
 // "global": o ranking também pode ser pedido sem turma, juntando a escola toda.
+const MATH_SEPARATE_TRAILS=['soma-facil','soma-medio','soma-dificil','multiplicacao','divisao'];
 const GAMES=new Map([
  ['trilha-dev',{trails:new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]]),maxXp:1500}],
- ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1],['divisao',1]]),maxXp:3000,global:true,internalClass:'TORNEIO DE MATEMATICA'}],
+ ['torneio-matematica',{
+  trails:new Map(['facil','medio','dificil','d4-facil','d4-medio','d4-dificil',...MATH_SEPARATE_TRAILS].map(trail=>[trail,1])),
+  maxXp:3000,global:true,internalClass:'TORNEIO DE MATEMATICA',
+ }],
  // Arena Dev: torneio eliminatório (até 3 partidas com bônus de vitória) e treino de 60 s; o jogo limita os pontos a 15000.
  ['arena-dev',{trails:new Map([['torneio',1],['treino',1]]),maxXp:15000,global:true}],
 ]);
@@ -46,8 +50,11 @@ export async function publicGameRoute(req,env,path,url,{db,json,throttle}){
   const where=['game=?'],args=[game];
   if(turma){where.push('turma=?');args.push(turma);}
   if(trail){where.push('trail=?');args.push(trail);}
-  // A rodada só de divisão tem classificação própria.
-  else if(game==='torneio-matematica'){where.push('trail<>?');args.push('divisao');}
+  // Os modos por operação têm classificação própria.
+  else if(game==='torneio-matematica'){
+   where.push('trail NOT IN ('+MATH_SEPARATE_TRAILS.map(()=>'?').join(',')+')');
+   args.push(...MATH_SEPARATE_TRAILS);
+  }
   const rows=await db(env).prepare('SELECT name,turma,SUM(xp) xp,SUM(stars) stars,COUNT(*) phases FROM game_results WHERE '+where.join(' AND ')+' GROUP BY name,turma ORDER BY xp DESC,name LIMIT 20').bind(...args).all();
   if(!turma)return json({game,turma:'',...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),turma:r.turma,xp:r.xp,stars:r.stars,phases:r.phases}))});
   return json({game,turma,...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),xp:r.xp,stars:r.stars,phases:r.phases}))});
