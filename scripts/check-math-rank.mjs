@@ -10,16 +10,26 @@ const score = {
   trail: 'medio', phase: 0, stars: 3, firstTry: 5,
 };
 
-for (const [points, expected] of [[635, 635], [720, 720], [630, 720]]) {
+async function sendScore(trail, points, expected) {
   const response = await worker.fetch(new Request(base + '/result', {
-    method: 'POST', headers, body: JSON.stringify({...score, xp: points}),
+    method: 'POST', headers, body: JSON.stringify({...score, trail, xp: points}),
   }), env);
   const result = await response.json();
   assert.equal(response.status, 200, `Envio do torneio rejeitado: ${JSON.stringify(result)}`);
   assert.equal(result.xp, expected);
 }
 
+for (const [points, expected] of [[635, 635], [720, 720], [630, 720]]) {
+  await sendScore('medio', points, expected);
+}
+await sendScore('divisao', 250, 250);
+
 const response = await worker.fetch(new Request(base + '/ranking?game=torneio-matematica&trail=medio', {headers}), env);
 assert.equal(response.status, 200);
 assert.equal((await response.json()).ranking[0]?.xp, 720);
+for (const [query, expected] of [['&trail=divisao', 250], ['', 720]]) {
+  const ranking = await worker.fetch(new Request(base + '/ranking?game=torneio-matematica' + query, {headers}), env);
+  assert.equal(ranking.status, 200);
+  assert.equal((await ranking.json()).ranking[0]?.xp, expected);
+}
 console.log('Ranking de Matemática verificado no pacote que será publicado.');

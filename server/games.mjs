@@ -7,7 +7,7 @@
 // "global": o ranking também pode ser pedido sem turma, juntando a escola toda.
 const GAMES=new Map([
  ['trilha-dev',{trails:new Map([['html',6],['css',3],['js',3],['logica',3],['bd',3],['git',3]]),maxXp:1500}],
- ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1]]),maxXp:3000,global:true,internalClass:'TORNEIO DE MATEMATICA'}],
+ ['torneio-matematica',{trails:new Map([['facil',1],['medio',1],['dificil',1],['d4-facil',1],['d4-medio',1],['d4-dificil',1],['divisao',1]]),maxXp:3000,global:true,internalClass:'TORNEIO DE MATEMATICA'}],
  // Arena Dev: torneio eliminatório (até 3 partidas com bônus de vitória) e treino de 60 s; o jogo limita os pontos a 15000.
  ['arena-dev',{trails:new Map([['torneio',1],['treino',1]]),maxXp:15000,global:true}],
 ]);
@@ -46,6 +46,8 @@ export async function publicGameRoute(req,env,path,url,{db,json,throttle}){
   const where=['game=?'],args=[game];
   if(turma){where.push('turma=?');args.push(turma);}
   if(trail){where.push('trail=?');args.push(trail);}
+  // A rodada só de divisão tem classificação própria.
+  else if(game==='torneio-matematica'){where.push('trail<>?');args.push('divisao');}
   const rows=await db(env).prepare('SELECT name,turma,SUM(xp) xp,SUM(stars) stars,COUNT(*) phases FROM game_results WHERE '+where.join(' AND ')+' GROUP BY name,turma ORDER BY xp DESC,name LIMIT 20').bind(...args).all();
   if(!turma)return json({game,turma:'',...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),turma:r.turma,xp:r.xp,stars:r.stars,phases:r.phases}))});
   return json({game,turma,...(trail?{trail}:{}),ranking:rows.results.map(r=>({name:shortName(r.name),xp:r.xp,stars:r.stars,phases:r.phases}))});
